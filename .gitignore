@@ -1,0 +1,40 @@
+# IDEs, Editors, and OS Files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+*.class
+
+# Build Directories (Java, Maven, Gradle)
+target/
+build/
+bin/
+out/
+logs/
+*.log
+
+# Node.js
+node_modules/
+dist/
+
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+
+# ==========================================
+# SECRETS & CREDENTIALS (DO NOT COMMIT)
+# ==========================================
+# Added specifically to prevent Github Push Protection errors
+hyperbuymain/notification/src/main/resources/firebase-adminsdk.json
+hyperbuymain/notification/credentials.json
+
+# Catch-all for other potential JSON keys
+*firebase*adminsdk*.json
+*credentials*.json
+*.pem
+*.key
+*.p12
+*.jks

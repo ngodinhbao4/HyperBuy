@@ -1,0 +1,19 @@
+# Đặt hành vi mặc định cho tất cả các file text
+* text=auto
+
+# Cụ thể hơn, ép buộc các file text phổ biến sử dụng LF trong repository
+# Git sẽ tự động xử lý chuyển đổi sang CRLF trên Windows khi checkout nếu core.autocrlf=true
+*.java     text eol=lf
+*.xml      text eol=lf
+*.properties text eol=lf
+*.md       text eol=lf
+*.txt      text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+mvnw       text eol=lf
+mvnw.cmd   text eol=crlf 
+# file batch của Windows nên giữ CRLF
+# Đối với các file nhị phân, đảm bảo Git không thay đổi chúng
+*.jar      binary
+*.png      binary
+*.jpg      binary

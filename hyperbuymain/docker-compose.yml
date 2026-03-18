@@ -1,0 +1,261 @@
+# Thuộc tính 'version' không còn cần thiết cho các phiên bản Docker Compose mới
+# version: '3.8'
+
+services:
+  # Định nghĩa service cho ứng dụng userservice của bạn
+  userservice:
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    container_name: user-service-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Sửa tên database thành hyperbuy_user_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_user_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - JWT_SIGNER_KEY=${JWT_SIGNER_KEY:-!TJXchW5FLOeSBb63Kck+DFHTaRpWL4JUGcWFgWxUG5S1F/ly/LgJxHnMQaF46A/i}
+      - TZ=Asia/Ho_Chi_Minh
+      # - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my-network
+
+  # Định nghĩa service cho ứng dụng productservice của bạn
+  productservice:
+    build:
+      context: .
+      dockerfile: product/Dockerfile
+    container_name: product-service-app
+    ports:
+      - "8081:8081"
+    environment:
+      # Sửa tên database thành hyperbuy_product_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_product_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - USER_SERVICE_URL=http://userservice:8080/api/v1/users
+      - TZ=Asia/Ho_Chi_Minh
+      # - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      # Thêm dòng này để mount named volume vào thư mục chứa ảnh upload
+      - product_images_data:/app/uploads/product-images
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my-network
+
+  # Định nghĩa service cho ứng dụng cartservice của bạn
+  cartservice:
+    build:
+      context: .
+      dockerfile: cart/Dockerfile
+    container_name: cart-service-app
+    ports:
+      - "8082:8082"
+    environment:
+      # Sửa tên database thành hyperbuy_cart_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_cart_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - PRODUCT_SERVICE_URL=http://productservice:8081
+      - JWT_SIGNER_KEY=${JWT_SIGNER_KEY:-!TJXchW5FLOeSBb63Kck+DFHTaRpWL4JUGcWFgWxUG5S1F/ly/LgJxHnMQaF46A/i}
+      - TZ=Asia/Ho_Chi_Minh
+      # - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      db:
+        condition: service_healthy
+      productservice:
+        condition: service_started
+      userservice:
+        condition: service_started
+    networks:
+      - my-network
+
+  orderservice:
+    build:
+      context: .
+      dockerfile: order/Dockerfile
+    container_name: order-service-app
+    ports:
+      - "8083:8083"
+    environment:
+      # Sửa tên database thành hyperbuy_cart_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_order_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - PRODUCT_SERVICE_URL=http://productservice:8081
+      - CART_SERVICE_URL=http://cartservice:8082
+      - VOUCHER_SERVICE_URL=http://voucher-service:8089
+      - JWT_SIGNER_KEY=${JWT_SIGNER_KEY:-!TJXchW5FLOeSBb63Kck+DFHTaRpWL4JUGcWFgWxUG5S1F/ly/LgJxHnMQaF46A/i}
+      - TZ=Asia/Ho_Chi_Minh
+      # - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      db:
+        condition: service_healthy
+      productservice:
+        condition: service_started
+      userservice:
+        condition: service_started
+    networks:
+      - my-network
+
+  paymentservice:
+    build:
+      context: .
+      dockerfile: payment/Dockerfile
+    container_name: payment-service-app
+    ports:
+      - "8084:8084"
+    environment:
+      # Sửa tên database thành hyperbuy_cart_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_payment_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - ORDER_SERVICE_URL=http://orderservice:8083
+      - JWT_SIGNER_KEY=${JWT_SIGNER_KEY:-!TJXchW5FLOeSBb63Kck+DFHTaRpWL4JUGcWFgWxUG5S1F/ly/LgJxHnMQaF46A/i}
+      - TZ=Asia/Ho_Chi_Minh
+      # - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      db:
+        condition: service_healthy
+      productservice:
+        condition: service_started
+      userservice:
+        condition: service_started
+    networks:
+      - my-network
+
+  notificationservice:
+    build:
+      context: .
+      dockerfile: notification/Dockerfile
+    container_name: notification-service-app
+    ports:
+      - "8085:8085" # Map cổng 8085 host với 8080 container
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_notification_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - USER_SERVICE_URL=http://userservice:8080
+      - JWT_SIGNER_KEY=${JWT_SIGNER_KEY:-!TJXchW5FLOeSBb63Kck+DFHTaRpWL4JUGcWFgWxUG5S1F/ly/LgJxHnMQaF46A/i}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - ./notification/credentials.json:/app/credentials.json:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      userservice:
+        condition: service_started
+    networks:
+      - my-network
+
+  chatservice:
+    build:
+      context: .
+      dockerfile: chat/Dockerfile
+    container_name: chat-service-app
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_chat_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - USER_SERVICE_URL=http://userservice:8080
+      - JWT_SIGNER_KEY=${JWT_SIGNER_KEY:-!TJXchW5FLOeSBb63Kck+DFHTaRpWL4JUGcWFgWxUG5S1F/ly/LgJxHnMQaF46A/i}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - TZ=Asia/Ho_Chi_Minh
+    depends_on:
+      db:
+        condition: service_healthy
+      userservice:
+        condition: service_started
+    networks:
+      - my-network
+
+  minigame-service:
+    build:
+      context: .
+      dockerfile: minigame/Dockerfile
+    container_name: minigame-service-app
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_minigame_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - VOUCHER_SERVICE_URL=http://voucher-service:8089
+      - TZ=Asia/Ho_Chi_Minh
+    depends_on:
+      - db
+      - voucher-service
+    networks:
+      - my-network
+
+  voucher-service:
+    build:
+      context: .
+      dockerfile: voucher/Dockerfile
+    container_name: voucher-service
+    ports:
+        - "8089:8089"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperbuy_voucher_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=baotrong
+      - MINIGAME_SERVICE_URL=http://minigame-service:8087
+      - TZ=Asia/Ho_Chi_Minh
+    depends_on:
+      - db
+    networks:
+      - my-network
+      
+  # Định nghĩa service cho cơ sở dữ liệu MySQL
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: baotrong
+      TZ: Asia/Ho_Chi_Minh
+      # MYSQL_DATABASE không còn cần thiết ở đây nữa nếu chúng ta dùng script init
+      # Tuy nhiên, nếu để lại, nó sẽ tạo database đó TRƯỚC KHI script init chạy.
+      # Để đơn giản, có thể bỏ MYSQL_DATABASE nếu script init đã tạo tất cả DB cần thiết.
+      # - MYSQL_DATABASE=hyperBuy # Bỏ hoặc để lại tùy ý, script init sẽ đảm bảo các DB khác được tạo
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Ánh xạ thư mục script init vào container MySQL
+      - ./mysql-init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-P", "3306", "-u" , "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - my-network
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - my-network
+
+volumes:
+  mysql_data:
+  product_images_data:
+
+networks:
+  my-network:
+    driver: bridge
