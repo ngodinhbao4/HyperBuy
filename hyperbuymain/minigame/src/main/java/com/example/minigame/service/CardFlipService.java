@@ -55,7 +55,7 @@ public class CardFlipService {
                 }
             }
         } else {
-            message = "😅 Thẻ bạn chọn không trúng. Thẻ trúng hôm nay gồm: " + winningCards;
+            message = "😅 Thẻ bạn chọn không trúng.";
         }
 
         // Lưu lịch sử
