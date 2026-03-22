@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cửa hàng | HyperBuy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/store.css" />
+</head>
+
+<body>
+<header>
+  <nav id="main-navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+
+      <ul id="main-nav" class="nav-links">
+        <li><a href="index.html" id="nav-home" class="nav-link">Trang Chủ</a></li>
+        <li><a href="products.html" id="nav-products" class="nav-link">Sản Phẩm</a></li>
+
+        <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link">Hồ Sơ</a></li>
+        <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link">Đơn Hàng</a></li>
+        <a href="admin.html" id="nav-admin-dashboard" style="display:none;">Trang Quản Trị</a>
+
+        <li id="nav-cart-link-li">
+          <a href="cart.html" id="nav-cart-link" class="nav-link">
+            Giỏ Hàng <span class="cart-item-count-nav" style="display:none;"></span>
+          </a>
+        </li>
+
+        <li><a href="minigame.html" class="nav-link">MiniGame</a></li>
+
+        <li id="nav-login"><a href="login.html" class="nav-link">Đăng Nhập</a></li>
+        <li id="nav-register"><a href="register.html" class="nav-link">Đăng Ký</a></li>
+        <li id="nav-logout" style="display:none;"><a href="#" class="nav-link">Đăng Xuất</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div id="sidebar-overlay" style="display:none;"></div>
+</header>
+
+<main class="container store-page">
+  <section class="store-info card" id="store-info">
+    <p>Đang tải thông tin cửa hàng...</p>
+  </section>
+
+  <section class="store-products">
+    <div class="section-header">
+      <h2>Sản phẩm của cửa hàng</h2>
+    </div>
+
+    <div id="store-products-grid" class="products-grid">
+      <p>Đang tải sản phẩm...</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; <span id="current-year"></span> HyperBuy.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/store.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await loadProfileData();
+      await fetchAndStoreMyStoreId();
+      updateNav();
+    } catch (e) {}
+
+    const y = document.getElementById("current-year");
+    if (y) y.textContent = new Date().getFullYear();
+  });
+</script>
+</body>
+</html>

@@ -1584,3 +1584,125 @@ body.dark-mode .form-fieldset { background: var(--panel-bg); }
   .auth-form { padding: 24px 18px; }
   .checkout-layout { gap: 16px; }
 }
+    .account-settings-block {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .account-settings-text h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 4px 0;
+      color: #111827;
+    }
+
+    .account-settings-text p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .account-settings-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding-inline: 18px;
+      white-space: nowrap;
+    }
+
+    .account-settings-btn i {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .account-settings-block {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .account-settings-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+/* ===== Page transition ===== */
+body {
+  opacity: 1;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+body.page-enter {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+body.page-exit {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  body { transition: none; }
+}
+/* ===== Card reveal animation ===== */
+.product-card {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .25s ease, transform .25s ease;
+}
+.product-card.card-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-card { opacity: 1; transform: none; transition: none; }
+}
+body {
+  opacity: 1;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+body.page-enter {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+body.page-exit {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+/* ===== Product detail reveal animation ===== */
+#product-detail-content {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+#product-detail-content.detail-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #product-detail-content {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+#product-detail-content {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s ease;
+}
+
+#product-detail-content.detail-show {
+  opacity: 1;
+  transform: translateY(0);
+}

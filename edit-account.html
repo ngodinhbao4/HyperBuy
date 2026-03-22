@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cập nhật tài khoản - HyperBuy</title>
+
+  <!-- Font & Icon giống các trang khác -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    body {
+      background-color: #f9fafb;
+      font-family: "Inter", sans-serif;
+    }
+
+    main.container {
+      margin-top: 60px;
+      max-width: 900px;
+    }
+
+    /* CARD CHÍNH */
+    #edit-account-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 30px 32px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      margin: 0 auto 40px auto;
+      border: 1px solid #e5e7eb;
+    }
+
+    .ea-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .ea-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ea-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ea-title i {
+      color: #6366f1;
+      font-size: 1.4rem;
+    }
+
+    .ea-subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .ea-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* FORM */
+    #edit-account-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 8px;
+    }
+
+    .ea-group-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #9ca3af;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .ea-2col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .ea-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ea-field label {
+      font-size: 0.88rem;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .ea-field input {
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      padding: 9px 11px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+      background-color: #f9fafb;
+    }
+
+    .ea-field input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
+      background-color: #ffffff;
+    }
+
+    .ea-field input::placeholder {
+      color: #9ca3af;
+    }
+
+    .ea-section-divider {
+      border: none;
+      border-top: 1px dashed #e5e7eb;
+      margin: 8px 0 4px 0;
+    }
+
+    /* PASSWORD BLOCK */
+    .ea-password-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ea-password-hint {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    /* FOOTER FORM */
+    .ea-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .ea-footer-text {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .ea-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .ea-btn-primary {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 18px rgba(79, 70, 229, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    .ea-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 25px rgba(79, 70, 229, 0.45);
+      opacity: 0.96;
+    }
+
+    .ea-btn-secondary-link {
+      border: none;
+      background: transparent;
+      font-size: 0.85rem;
+      color: #6b7280;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* MESSAGE */
+    #edit-account-message {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    #edit-account-message.success-message {
+      color: #16a34a;
+    }
+
+    #edit-account-message.error-message {
+      color: #dc2626;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      #edit-account-card {
+        padding: 24px 18px;
+      }
+
+      .ea-2col {
+        grid-template-columns: 1fr;
+      }
+
+      .ea-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ea-footer {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+      }
+
+      .ea-actions {
+        width: 100%;
+      }
+
+      .ea-btn-primary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Có thể copy header giống profile.html nếu bạn muốn đồng nhất -->
+  <header>
+    <nav id="main-navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+        <ul id="main-nav" class="nav-links">
+          <li><a href="index.html" class="nav-link">Trang Chủ</a></li>
+          <li><a href="products.html" class="nav-link">Sản Phẩm</a></li>
+          <li id="nav-profile"><a href="profile.html" class="nav-link active">Hồ Sơ</a></li>
+          <li><a href="my-orders.html" class="nav-link">Đơn Hàng</a></li>
+          <li><a href="minigame.html" class="nav-link">MiniGame</a></li>
+          <li id="nav-cart-link-li"><a href="cart.html" class="nav-link">Giỏ Hàng</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="edit-account-card">
+      <div class="ea-header">
+        <div class="ea-header-left">
+          <div class="ea-title">
+            <i class="fas fa-user-shield"></i>
+            <span>Cập nhật tài khoản</span>
+          </div>
+          <p class="ea-subtitle">
+            Thay đổi thông tin cơ bản và (tuỳ chọn) đổi mật khẩu đăng nhập của bạn.
+          </p>
+        </div>
+
+        <span class="ea-badge">
+          <i class="fas fa-circle-dot"></i>
+          Tài khoản của bạn
+        </span>
+      </div>
+
+      <form id="edit-account-form">
+        <div class="ea-2col">
+          <div class="ea-field">
+            <label for="ea-name">Họ và tên</label>
+            <input type="text" id="ea-name" name="name" placeholder="Nhập họ tên...">
+          </div>
+
+          <div class="ea-field">
+            <label for="ea-email">Email</label>
+            <input type="email" id="ea-email" name="email" placeholder="Nhập email...">
+          </div>
+        </div>
+
+        <div class="ea-2col">
+          <div class="ea-field">
+            <label for="ea-dob">Ngày sinh</label>
+            <input type="date" id="ea-dob" name="dob">
+          </div>
+          <!-- Nếu backend có phone thì bật block này lên
+          <div class="ea-field">
+            <label for="ea-phone">Số điện thoại</label>
+            <input type="text" id="ea-phone" name="phone" placeholder="Nhập số điện thoại">
+          </div>
+          -->
+        </div>
+
+        <hr class="ea-section-divider">
+
+        <div class="ea-password-row">
+          <div class="ea-field">
+            <label for="ea-password">Mật khẩu mới (tuỳ chọn)</label>
+            <input type="password"
+                   id="ea-password"
+                   name="password"
+                   placeholder="Nhập mật khẩu mới nếu muốn đổi">
+          </div>
+          <p class="ea-password-hint">
+            Để trống nếu bạn không muốn thay đổi mật khẩu.
+          </p>
+        </div>
+
+        <div class="ea-footer">
+          <p class="ea-footer-text">
+            Mọi thay đổi sẽ áp dụng cho lần đăng nhập tiếp theo.
+          </p>
+          <div class="ea-actions">
+            <button type="submit" class="ea-btn-primary">
+              <i class="fas fa-floppy-disk"></i>
+              <span>Lưu thay đổi</span>
+            </button>
+            <button type="button"
+                    class="ea-btn-secondary-link"
+                    onclick="window.location.href='profile.html'">
+              Quay lại hồ sơ
+            </button>
+          </div>
+        </div>
+
+        <p id="edit-account-message" class="profile-message"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="current-year"></span> HyperBuy.</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

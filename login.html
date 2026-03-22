@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,85 +9,93 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<header class="main-header">
-  <nav id="main-navbar">
-    <div class="container nav-container">
-      <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
-      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
-      </button>
-      <ul id="main-nav" class="nav-links">
-        <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
-        <li><a href="products.html" id="nav-products" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
-        <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Hồ Sơ</a></li>
-        <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
-        <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i class="fas fa-cogs"></i> Quản Trị</a></li>
-        <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
-        <li id="nav-cart-link-li">
-          <a href="cart.html" class="nav-link">
-            <i class="fas fa-shopping-cart"></i> Giỏ Hàng
-            <span class="cart-item-count-nav" style="display:none;"></span>
-          </a>
-        </li>
-        <li id="nav-notification-bell" style="display:none; position:relative;">
-          <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
-            <i class="fas fa-bell"></i>
-            <span id="notification-count" class="notification-badge" style="display:none;"></span>
-          </a>
-          <div id="notification-dropdown" class="notification-list-dropdown">
-            <div class="notification-dropdown-header">Thông báo</div>
-            <ul id="notification-list-items" class="notification-list">
-              <li><a class="dropdown-item-notif" href="#">Không có thông báo nào.</a></li>
-            </ul>
-            <div class="notification-dropdown-footer">
-              <a href="notifications.html" class="view-all-notifications">Xem tất cả thông báo</a>
+  <header class="main-header">
+    <nav id="main-navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+          <i class="fas fa-bars"></i>
+        </button>
+        <ul id="main-nav" class="nav-links">
+          <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
+          <li><a href="products.html" id="nav-products" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+          <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i>
+              Hồ Sơ</a></li>
+          <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i
+                class="fas fa-receipt"></i> Đơn Hàng</a></li>
+          <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i
+                class="fas fa-cogs"></i> Quản Trị</a></li>
+          <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
+          <li id="nav-cart-link-li">
+            <a href="cart.html" class="nav-link">
+              <i class="fas fa-shopping-cart"></i> Giỏ Hàng
+              <span class="cart-item-count-nav" style="display:none;"></span>
+            </a>
+          </li>
+          <li id="nav-notification-bell" style="display:none; position:relative;">
+            <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
+              <i class="fas fa-bell"></i>
+              <span id="notification-count" class="notification-badge" style="display:none;"></span>
+            </a>
+            <div id="notification-dropdown" class="notification-list-dropdown">
+              <div class="notification-dropdown-header">Thông báo</div>
+              <ul id="notification-list-items" class="notification-list">
+                <li><a class="dropdown-item-notif" href="#">Không có thông báo nào.</a></li>
+              </ul>
+              <div class="notification-dropdown-footer">
+                <a href="notifications.html" class="view-all-notifications">Xem tất cả thông báo</a>
+              </div>
             </div>
-          </div>
-        </li>
-        <li id="nav-login"><a href="login.html" class="nav-link active"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
-        <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a></li>
-        <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
-      </ul>
-    </div>
-  </nav>
-</header>
-
-<div class="auth-wrapper">
-  <section class="auth-form">
-    <h2><i class="fas fa-bolt"></i> Đăng Nhập</h2>
-    <p class="auth-subtitle">Chào mừng trở lại! Đăng nhập để tiếp tục mua sắm.</p>
-
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="login-username"><i class="fas fa-user"></i> Tên đăng nhập</label>
-        <input type="text" id="login-username" name="username" placeholder="Nhập tên đăng nhập..." required>
+          </li>
+          <li id="nav-login"><a href="login.html" class="nav-link active"><i class="fas fa-sign-in-alt"></i> Đăng
+              Nhập</a></li>
+          <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a>
+          </li>
+          <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i>
+              Đăng Xuất</a></li>
+        </ul>
       </div>
-      <div class="form-group">
-        <label for="login-password"><i class="fas fa-lock"></i> Mật khẩu</label>
-        <input type="password" id="login-password" name="password" placeholder="Nhập mật khẩu..." required>
-      </div>
-      <button type="submit" class="btn btn-primary btn-submit-form">
-        <i class="fas fa-sign-in-alt"></i> Đăng Nhập
-      </button>
-      <p id="login-error-message" class="error-message" style="display:none;"></p>
-      <p class="switch-form">Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a></p>
-    </form>
-  </section>
-</div>
+    </nav>
+  </header>
 
-<footer>
-  <div class="container">
-    <p>© <span id="current-year"></span> HyperBuy. Mọi quyền được bảo lưu.</p>
+  <div class="auth-wrapper">
+    <section class="auth-form">
+      <h2><i class="fas fa-bolt"></i> Đăng Nhập</h2>
+      <p class="auth-subtitle">Chào mừng trở lại! Đăng nhập để tiếp tục mua sắm.</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="login-username"><i class="fas fa-user"></i> Tên đăng nhập</label>
+          <input type="text" id="login-username" name="username" placeholder="Nhập tên đăng nhập..." required>
+        </div>
+        <div class="form-group">
+          <label for="login-password"><i class="fas fa-lock"></i> Mật khẩu</label>
+          <input type="password" id="login-password" name="password" placeholder="Nhập mật khẩu..." required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-submit-form">
+          <i class="fas fa-sign-in-alt"></i> Đăng Nhập
+        </button>
+        <p id="login-error-message" class="error-message" style="display:none;"></p>
+        <p class="switch-form">Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a></p>
+      </form>
+    </section>
   </div>
-</footer>
 
-<script src="js/main.js"></script>
-<script>
-  document.getElementById('nav-toggle').addEventListener('click', () => {
-    document.getElementById('main-nav').classList.toggle('open');
-  });
-</script>
+  <footer>
+    <div class="container">
+      <p>© <span id="current-year"></span> HyperBuy. Mọi quyền được bảo lưu.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('main-nav').classList.toggle('open');
+    });
+  </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,233 +10,231 @@
   <link rel="stylesheet" href="css/style.css">
 
 </head>
+
 <body>
 
-<header class="main-header">
-  <nav id="main-navbar">
-    <div class="container nav-container">
-      <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
-      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
-      </button>
-      <ul id="main-nav" class="nav-links">
-        <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
-        <li><a href="products.html" id="nav-products" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
-        <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Hồ Sơ</a></li>
-        <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
-        <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i class="fas fa-cogs"></i> Quản Trị</a></li>
-        <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
-        <li id="nav-cart-link-li">
-          <a href="cart.html" id="nav-cart-link" class="nav-link">
-            <i class="fas fa-shopping-cart"></i> Giỏ Hàng
-            <span class="cart-item-count-nav" style="display:none;"></span>
-          </a>
-        </li>
-        <li id="nav-notification-bell" style="display:none; position:relative;">
-          <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
-            <i class="fas fa-bell"></i>
-            <span id="notification-count" class="notification-badge" style="display:none;"></span>
-          </a>
-          <div id="notification-dropdown" class="notification-list-dropdown">
-            <div class="notification-dropdown-header">Thông báo</div>
-            <ul id="notification-list-items" class="notification-list">
-              <li><a class="dropdown-item-notif" href="#">Không có thông báo nào.</a></li>
-            </ul>
-            <div class="notification-dropdown-footer">
-              <a href="notifications.html" class="view-all-notifications">Xem tất cả</a>
-            </div>
-          </div>
-        </li>
-        <li id="nav-login"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
-        <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a></li>
-        <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
-      </ul>
-    </div>
-  </nav>
-</header>
-
-<main class="container">
-  <section id="checkout-section" class="checkout-page">
-    <h1 class="checkout-title">Thông Tin Đặt Hàng</h1>
-    <p class="checkout-subtitle">
-      Vui lòng kiểm tra lại thông tin giao hàng và đơn hàng trước khi xác nhận.
-    </p>
-
-    <div class="checkout-layout">
-      <!-- CỘT TRÁI: FORM THANH TOÁN -->
-      <div class="checkout-left">
-        <form id="checkoutForm">
-          <!-- ĐỊA CHỈ GIAO HÀNG -->
-          <fieldset class="form-fieldset">
-            <legend><i class="fa-solid fa-location-dot"></i> Địa Chỉ Giao Hàng</legend>
-
-            <div class="form-group">
-              <label for="shipping-address1">Địa chỉ dòng 1</label>
-              <input type="text" id="shipping-address1" name="shippingAddressLine1" required>
-            </div>
-
-            <div class="form-group">
-              <label for="shipping-address2">Địa chỉ dòng 2 (tùy chọn)</label>
-              <input type="text" id="shipping-address2" name="shippingAddressLine2">
-            </div>
-
-            <div class="form-row">
-              <div class="form-group form-group-half">
-                <label for="shipping-city">Thành phố/Tỉnh</label>
-                <input type="text" id="shipping-city" name="shippingCity" required>
-              </div>
-              <div class="form-group form-group-half">
-                <label for="shipping-postalcode">Mã bưu điện</label>
-                <input type="text" id="shipping-postalcode" name="shippingPostalCode" required>
+  <header class="main-header">
+    <nav id="main-navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+          <i class="fas fa-bars"></i>
+        </button>
+        <ul id="main-nav" class="nav-links">
+          <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
+          <li><a href="products.html" id="nav-products" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+          <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i>
+              Hồ Sơ</a></li>
+          <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i
+                class="fas fa-receipt"></i> Đơn Hàng</a></li>
+          <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i
+                class="fas fa-cogs"></i> Quản Trị</a></li>
+          <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
+          <li id="nav-cart-link-li">
+            <a href="cart.html" id="nav-cart-link" class="nav-link">
+              <i class="fas fa-shopping-cart"></i> Giỏ Hàng
+              <span class="cart-item-count-nav" style="display:none;"></span>
+            </a>
+          </li>
+          <li id="nav-notification-bell" style="display:none; position:relative;">
+            <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
+              <i class="fas fa-bell"></i>
+              <span id="notification-count" class="notification-badge" style="display:none;"></span>
+            </a>
+            <div id="notification-dropdown" class="notification-list-dropdown">
+              <div class="notification-dropdown-header">Thông báo</div>
+              <ul id="notification-list-items" class="notification-list">
+                <li><a class="dropdown-item-notif" href="#">Không có thông báo nào.</a></li>
+              </ul>
+              <div class="notification-dropdown-footer">
+                <a href="notifications.html" class="view-all-notifications">Xem tất cả</a>
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="shipping-country">Quốc gia</label>
-              <input type="text" id="shipping-country" name="shippingCountry" value="VN" required>
-            </div>
-          </fieldset>
-
-          <!-- ĐỊA CHỈ THANH TOÁN -->
-          <div class="form-group form-group-inline-checkbox">
-            <input type="checkbox" id="sameAsShipping" name="sameAsShipping" checked>
-            <label for="sameAsShipping">Địa chỉ thanh toán giống địa chỉ giao hàng</label>
-          </div>
-
-          <fieldset class="form-fieldset" id="billingAddressFieldset" style="display:none;">
-            <legend><i class="fa-solid fa-receipt"></i> Địa Chỉ Thanh Toán</legend>
-
-            <div class="form-group">
-              <label for="billing-address1">Địa chỉ dòng 1</label>
-              <input type="text" id="billing-address1" name="billingAddressLine1">
-            </div>
-
-            <div class="form-group">
-              <label for="billing-address2">Địa chỉ dòng 2 (tùy chọn)</label>
-              <input type="text" id="billing-address2" name="billingAddressLine2">
-            </div>
-
-            <div class="form-row">
-              <div class="form-group form-group-half">
-                <label for="billing-city">Thành phố/Tỉnh</label>
-                <input type="text" id="billing-city" name="billingCity">
-              </div>
-              <div class="form-group form-group-half">
-                <label for="billing-postalcode">Mã bưu điện</label>
-                <input type="text" id="billing-postalcode" name="billingPostalCode">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="billing-country">Quốc gia</label>
-              <input type="text" id="billing-country" name="billingCountry" value="VN">
-            </div>
-          </fieldset>
-
-          <!-- PHƯƠNG THỨC THANH TOÁN -->
-          <fieldset class="form-fieldset">
-            <legend><i class="fa-solid fa-credit-card"></i> Phương Thức Thanh Toán</legend>
-            <div class="form-group">
-              <label for="payment-method">Chọn phương thức</label>
-              <select id="payment-method" name="paymentMethod" required>
-                <option value="COD" selected>Thanh toán khi nhận hàng (COD)</option>
-                <option value="BANK_TRANSFER" disabled>Chuyển khoản ngân hàng (Chưa hỗ trợ)</option>
-                <option value="CREDIT_CARD" disabled>Thẻ tín dụng (Chưa hỗ trợ)</option>
-              </select>
-            </div>
-          </fieldset>
-
-          <!-- VOUCHER -->
-          <fieldset class="form-fieldset">
-            <legend><i class="fa-solid fa-ticket"></i> Voucher</legend>
-
-            <div class="form-group">
-              <label for="checkout-voucher-code">Mã voucher</label>
-              <div class="checkout-voucher-row">
-                <input
-                  type="text"
-                  id="checkout-voucher-code"
-                  class="form-control"
-                  placeholder="Nhập mã voucher"
-                >
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  onclick="openVoucherSelectionModal()"
-                >
-                  Chọn voucher
-                </button>
-              </div>
-              <small id="voucher-apply-message" class="voucher-apply-message"></small>
-            </div>
-          </fieldset>
-
-          <!-- MODAL DANH SÁCH VOUCHER (giữ nguyên để JS dùng) -->
-          <div id="voucherSelectionModal" class="modal">
-            <div class="modal-content" style="max-width:750px; max-height:80vh; overflow-y:auto;">
-              <span class="close-button" onclick="closeVoucherSelectionModal()">&times;</span>
-              <h3>Voucher có thể sử dụng</h3>
-              <div id="voucher-selection-list" class="voucher-grid"></div>
-            </div>
-          </div>
-
-          <!-- SUBMIT -->
-          <div class="checkout-submit-wrapper">
-            <button type="submit" class="btn btn-primary btn-submit-form">
-              Xác Nhận Đặt Hàng
-            </button>
-            <p id="checkout-error-message" class="error-message" style="display:none;"></p>
-          </div>
-        </form>
+          </li>
+          <li id="nav-login"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
+          <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a>
+          </li>
+          <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i>
+              Đăng Xuất</a></li>
+        </ul>
       </div>
+    </nav>
+  </header>
 
-      <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG -->
-      <aside class="checkout-right">
-        <div class="checkout-summary-card">
-          <h3>Tóm Tắt Đơn Hàng</h3>
-          <p class="checkout-summary-subtitle">
-            Sản phẩm, số lượng và tổng tiền sẽ được cập nhật tự động từ giỏ hàng.
-          </p>
-          <div id="checkout-cart-summary">
-            <p>Đang tải tóm tắt giỏ hàng...</p>
-          </div>
+  <main class="container">
+    <section id="checkout-section" class="checkout-page">
+      <h1 class="checkout-title">Thông Tin Đặt Hàng</h1>
+      <p class="checkout-subtitle">
+        Vui lòng kiểm tra lại thông tin giao hàng và đơn hàng trước khi xác nhận.
+      </p>
 
-          <div class="checkout-summary-total">
-    <div class="checkout-summary-row">
-        <span>Tạm tính</span>
-        <span id="checkout-subtotal">-</span>
-    </div>
-    <div class="checkout-summary-row">
-        <span>Giảm giá voucher</span>
-        <span id="checkout-discount">-</span>
-    </div>
-    <div class="checkout-summary-row checkout-summary-total">
-        <span>Thành tiền</span>
-        <span id="checkout-final">-</span>
-    </div>
-          </div>
+      <div class="checkout-layout">
+        <!-- CỘT TRÁI: FORM THANH TOÁN -->
+        <div class="checkout-left">
+          <form id="checkoutForm">
+            <!-- ĐỊA CHỈ GIAO HÀNG -->
+            <fieldset class="form-fieldset">
+              <legend><i class="fa-solid fa-location-dot"></i> Địa Chỉ Giao Hàng</legend>
 
-          <p class="checkout-note">
-            Bằng việc đặt hàng, bạn đồng ý với các điều khoản mua sắm của HyperBuy.
-          </p>
+              <div class="form-group">
+                <label for="shipping-address1">Địa chỉ dòng 1</label>
+                <input type="text" id="shipping-address1" name="shippingAddressLine1" required>
+              </div>
+
+              <div class="form-group">
+                <label for="shipping-address2">Địa chỉ dòng 2 (tùy chọn)</label>
+                <input type="text" id="shipping-address2" name="shippingAddressLine2">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="shipping-city">Thành phố/Tỉnh</label>
+                  <input type="text" id="shipping-city" name="shippingCity" required>
+                </div>
+                <div class="form-group form-group-half">
+                  <label for="shipping-postalcode">Mã bưu điện</label>
+                  <input type="text" id="shipping-postalcode" name="shippingPostalCode" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="shipping-country">Quốc gia</label>
+                <input type="text" id="shipping-country" name="shippingCountry" value="VN" required>
+              </div>
+            </fieldset>
+
+            <!-- ĐỊA CHỈ THANH TOÁN -->
+            <div class="form-group form-group-inline-checkbox">
+              <input type="checkbox" id="sameAsShipping" name="sameAsShipping" checked>
+              <label for="sameAsShipping">Địa chỉ thanh toán giống địa chỉ giao hàng</label>
+            </div>
+
+            <fieldset class="form-fieldset" id="billingAddressFieldset" style="display:none;">
+              <legend><i class="fa-solid fa-receipt"></i> Địa Chỉ Thanh Toán</legend>
+
+              <div class="form-group">
+                <label for="billing-address1">Địa chỉ dòng 1</label>
+                <input type="text" id="billing-address1" name="billingAddressLine1">
+              </div>
+
+              <div class="form-group">
+                <label for="billing-address2">Địa chỉ dòng 2 (tùy chọn)</label>
+                <input type="text" id="billing-address2" name="billingAddressLine2">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group form-group-half">
+                  <label for="billing-city">Thành phố/Tỉnh</label>
+                  <input type="text" id="billing-city" name="billingCity">
+                </div>
+                <div class="form-group form-group-half">
+                  <label for="billing-postalcode">Mã bưu điện</label>
+                  <input type="text" id="billing-postalcode" name="billingPostalCode">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="billing-country">Quốc gia</label>
+                <input type="text" id="billing-country" name="billingCountry" value="VN">
+              </div>
+            </fieldset>
+
+            <!-- PHƯƠNG THỨC THANH TOÁN -->
+            <fieldset class="form-fieldset">
+              <legend><i class="fa-solid fa-credit-card"></i> Phương Thức Thanh Toán</legend>
+              <div class="form-group">
+                <label for="payment-method">Chọn phương thức</label>
+                <select id="payment-method" name="paymentMethod" required>
+                  <option value="COD" selected>Thanh toán khi nhận hàng (COD)</option>
+                  <option value="BANK_TRANSFER" disabled>Chuyển khoản ngân hàng (Chưa hỗ trợ)</option>
+                  <option value="CREDIT_CARD" disabled>Thẻ tín dụng (Chưa hỗ trợ)</option>
+                </select>
+              </div>
+            </fieldset>
+
+            <!-- VOUCHER -->
+            <fieldset class="form-fieldset">
+              <legend><i class="fa-solid fa-ticket"></i> Voucher</legend>
+
+              <div class="form-group">
+                <label for="checkout-voucher-code">Mã voucher</label>
+                <div class="checkout-voucher-row">
+                  <input type="text" id="checkout-voucher-code" class="form-control" placeholder="Nhập mã voucher">
+                  <button type="button" class="btn btn-secondary" onclick="openVoucherSelectionModal()">
+                    Chọn voucher
+                  </button>
+                </div>
+                <small id="voucher-apply-message" class="voucher-apply-message"></small>
+              </div>
+            </fieldset>
+
+            <!-- MODAL DANH SÁCH VOUCHER (giữ nguyên để JS dùng) -->
+            <div id="voucherSelectionModal" class="modal">
+              <div class="modal-content" style="max-width:750px; max-height:80vh; overflow-y:auto;">
+                <span class="close-button" onclick="closeVoucherSelectionModal()">&times;</span>
+                <h3>Voucher có thể sử dụng</h3>
+                <div id="voucher-selection-list" class="voucher-grid"></div>
+              </div>
+            </div>
+
+            <!-- SUBMIT -->
+            <div class="checkout-submit-wrapper">
+              <button type="submit" class="btn btn-primary btn-submit-form">
+                Xác Nhận Đặt Hàng
+              </button>
+              <p id="checkout-error-message" class="error-message" style="display:none;"></p>
+            </div>
+          </form>
         </div>
-      </aside>
+
+        <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG -->
+        <aside class="checkout-right">
+          <div class="checkout-summary-card">
+            <h3>Tóm Tắt Đơn Hàng</h3>
+            <p class="checkout-summary-subtitle">
+              Sản phẩm, số lượng và tổng tiền sẽ được cập nhật tự động từ giỏ hàng.
+            </p>
+            <div id="checkout-cart-summary">
+              <p>Đang tải tóm tắt giỏ hàng...</p>
+            </div>
+
+            <div class="checkout-summary-total">
+              <div class="checkout-summary-row">
+                <span>Tạm tính</span>
+                <span id="checkout-subtotal">-</span>
+              </div>
+              <div class="checkout-summary-row">
+                <span>Giảm giá voucher</span>
+                <span id="checkout-discount">-</span>
+              </div>
+              <div class="checkout-summary-row checkout-summary-total">
+                <span>Thành tiền</span>
+                <span id="checkout-final">-</span>
+              </div>
+            </div>
+
+            <p class="checkout-note">
+              Bằng việc đặt hàng, bạn đồng ý với các điều khoản mua sắm của HyperBuy.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+
+  <footer>
+    <div class="container">
+      <p>&copy; <span id="current-year"></span> HyperBuy.</p>
     </div>
-  </section>
-</main>
-
-
-    <footer>
-        <div class="container">
-            <p>&copy; <span id="current-year"></span> HyperBuy.</p>
-        </div>
-    </footer>
-    <script src="js/main.js"></script>
-    <script>
-      document.getElementById('nav-toggle').addEventListener('click', () => {
-        document.getElementById('main-nav').classList.toggle('open');
-      });
-    </script>
+  </footer>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('main-nav').classList.toggle('open');
+    });
+  </script>
 
 </body>
+
 </html>
