@@ -81,6 +81,12 @@ public ResponseEntity<UserVoucher> redeemByPoints(
     UserVoucher userVoucher = voucherService.redeemVoucherByPoints(userId, code);
     return ResponseEntity.ok(userVoucher);
 }
+    // ✅ Admin xóa voucher theo code
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> delete(@PathVariable String code) {
+        voucherService.deleteVoucher(code);
+        return ResponseEntity.ok().build();
+    }
 
 
 }
