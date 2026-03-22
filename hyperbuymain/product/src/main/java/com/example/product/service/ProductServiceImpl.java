@@ -41,6 +41,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final UserServiceClient userServiceClient;
     private final Path rootLocation;
+    private final CloudinaryService cloudinaryService; // Added CloudinaryService
 
     @Value("${app.static-resource.public-path-pattern}")
     private String publicPathPattern;
@@ -49,10 +50,12 @@ public class ProductServiceImpl implements ProductService {
             ProductRepository productRepository,
             CategoryRepository categoryRepository,
             UserServiceClient userServiceClient,
+            CloudinaryService cloudinaryService,
             @Value("${app.upload.dir}") String uploadDirConfiguration) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.userServiceClient = userServiceClient;
+        this.cloudinaryService = cloudinaryService;
         this.rootLocation = Paths.get(uploadDirConfiguration);
     }
 
@@ -72,56 +75,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private String storeFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            logger.warn("Không có file nào được cung cấp hoặc file rỗng.");
-            return null;
-        }
-
-        String originalFilenameFromMultipart = file.getOriginalFilename();
-        if (originalFilenameFromMultipart == null || originalFilenameFromMultipart.strip().isEmpty()) {
-            logger.warn("Tên file gốc từ MultipartFile là null hoặc rỗng. Không thể lưu file.");
-            return null;
-        }
-
-        String originalFilename = StringUtils.cleanPath(originalFilenameFromMultipart);
-        String extension = "";
-        int i = originalFilename.lastIndexOf('.');
-        if (i > 0) {
-            extension = originalFilename.substring(i);
-        }
-        String uniqueFileName = UUID.randomUUID().toString() + extension;
-
-        try {
-            if (originalFilename.contains("..")) {
-                throw new RuntimeException("Không thể lưu file với đường dẫn tương đối ngoài thư mục hiện tại: " + originalFilename);
-            }
-            Path destinationFile = this.rootLocation.resolve(uniqueFileName).normalize().toAbsolutePath();
-            if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-                throw new RuntimeException("Không thể lưu file ngoài thư mục hiện tại: " + originalFilename);
-            }
-
-            try (var inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-            }
-            logger.info("Đã lưu file: {}", uniqueFileName);
-            return uniqueFileName;
-        } catch (IOException e) {
-            logger.error("Lưu file {} thất bại: {}", uniqueFileName, e.getMessage());
-            throw new RuntimeException("Lưu file " + originalFilename + " thất bại", e);
-        }
+        return cloudinaryService.uploadFile(file);
     }
 
     private void deleteStoredFile(String filename) {
-        if (filename == null || filename.isEmpty()) {
-            return;
-        }
-        try {
-            Path fileToDelete = rootLocation.resolve(filename).normalize().toAbsolutePath();
-            Files.deleteIfExists(fileToDelete);
-            logger.info("Đã xóa file đã lưu: {}", filename);
-        } catch (IOException e) {
-            logger.error("Xóa file {} thất bại: {}", filename, e.getMessage());
-        }
+        cloudinaryService.deleteFile(filename);
     }
 
     private ProductResponse convertToProductResponseWithImageUrl(Product product, String token) {
@@ -155,30 +113,35 @@ public class ProductServiceImpl implements ProductService {
 
     String storedImageIdentifier = product.getImageUrl();
     if (storedImageIdentifier != null && !storedImageIdentifier.isEmpty()) {
+        if (storedImageIdentifier.startsWith("http")) {
+            // Cloudinary URL (or any external URL)
+            dto.setImageUrl(storedImageIdentifier);
+        } else {
+            // Legacy local filesystem image support
+            // 🧹 Chuẩn hóa path, loại bỏ "files/" thừa
+            storedImageIdentifier = storedImageIdentifier.replace("\\", "/");
+            if (storedImageIdentifier.startsWith("/")) {
+                storedImageIdentifier = storedImageIdentifier.substring(1);
+            }
+            if (storedImageIdentifier.startsWith("files/")) {
+                storedImageIdentifier = storedImageIdentifier.substring("files/".length());
+            }
 
-        // 🧹 Chuẩn hóa path, loại bỏ "files/" thừa
-        storedImageIdentifier = storedImageIdentifier.replace("\\", "/");
-        if (storedImageIdentifier.startsWith("/")) {
-            storedImageIdentifier = storedImageIdentifier.substring(1);
-        }
-        if (storedImageIdentifier.startsWith("files/")) {
-            storedImageIdentifier = storedImageIdentifier.substring("files/".length());
-        }
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            String cleanPublicPath = publicPathPattern.endsWith("/**")
+                    ? publicPathPattern.substring(0, publicPathPattern.length() - 3)
+                    : publicPathPattern;
 
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        String cleanPublicPath = publicPathPattern.endsWith("/**")
-                ? publicPathPattern.substring(0, publicPathPattern.length() - 3)
-                : publicPathPattern;
+            if (cleanPublicPath.endsWith("/")) {
+                cleanPublicPath = cleanPublicPath.substring(0, cleanPublicPath.length() - 1);
+            }
+            if (!cleanPublicPath.startsWith("/")) {
+                cleanPublicPath = "/" + cleanPublicPath;
+            }
 
-        if (cleanPublicPath.endsWith("/")) {
-            cleanPublicPath = cleanPublicPath.substring(0, cleanPublicPath.length() - 1);
+            String fullImageUrl = baseUrl + cleanPublicPath + "/" + storedImageIdentifier;
+            dto.setImageUrl(fullImageUrl);
         }
-        if (!cleanPublicPath.startsWith("/")) {
-            cleanPublicPath = "/" + cleanPublicPath;
-        }
-
-        String fullImageUrl = baseUrl + cleanPublicPath + "/" + storedImageIdentifier;
-        dto.setImageUrl(fullImageUrl);
     } else {
         dto.setImageUrl(null);
     }
@@ -202,29 +165,34 @@ public class ProductServiceImpl implements ProductService {
 
     String storedImageIdentifier = product.getImageUrl();
     if (storedImageIdentifier != null && !storedImageIdentifier.isEmpty()) {
+        if (storedImageIdentifier.startsWith("http")) {
+            // Cloudinary URL (or any external URL)
+            productMap.put("imageUrl", storedImageIdentifier);
+        } else {
+            // Legacy local filesystem image support
+            // 🧹 Chuẩn hóa path, loại bỏ "files/" thừa
+            storedImageIdentifier = storedImageIdentifier.replace("\\", "/");
+            if (storedImageIdentifier.startsWith("/")) {
+                storedImageIdentifier = storedImageIdentifier.substring(1);
+            }
+            if (storedImageIdentifier.startsWith("files/")) {
+                storedImageIdentifier = storedImageIdentifier.substring("files/".length());
+            }
 
-        // 🧹 Chuẩn hóa path, loại bỏ "files/" thừa
-        storedImageIdentifier = storedImageIdentifier.replace("\\", "/");
-        if (storedImageIdentifier.startsWith("/")) {
-            storedImageIdentifier = storedImageIdentifier.substring(1);
-        }
-        if (storedImageIdentifier.startsWith("files/")) {
-            storedImageIdentifier = storedImageIdentifier.substring("files/".length());
-        }
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            String cleanPublicPath = publicPathPattern.endsWith("/**")
+                    ? publicPathPattern.substring(0, publicPathPattern.length() - 3)
+                    : publicPathPattern;
 
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        String cleanPublicPath = publicPathPattern.endsWith("/**")
-                ? publicPathPattern.substring(0, publicPathPattern.length() - 3)
-                : publicPathPattern;
+            if (cleanPublicPath.endsWith("/")) {
+                cleanPublicPath = cleanPublicPath.substring(0, cleanPublicPath.length() - 1);
+            }
+            if (!cleanPublicPath.startsWith("/")) {
+                cleanPublicPath = "/" + cleanPublicPath;
+            }
 
-        if (cleanPublicPath.endsWith("/")) {
-            cleanPublicPath = cleanPublicPath.substring(0, cleanPublicPath.length() - 1);
+            productMap.put("imageUrl", baseUrl + cleanPublicPath + "/" + storedImageIdentifier);
         }
-        if (!cleanPublicPath.startsWith("/")) {
-            cleanPublicPath = "/" + cleanPublicPath;
-        }
-
-        productMap.put("imageUrl", baseUrl + cleanPublicPath + "/" + storedImageIdentifier);
     } else {
         productMap.put("imageUrl", null);
     }
@@ -372,12 +340,12 @@ public Page<ProductResponse> findProducts(
             throw new RuntimeException("Bạn không có quyền xóa sản phẩm này");
         }
 
-        if (product.getImageUrl() != null) {
-            deleteStoredFile(product.getImageUrl());
-        }
-
-        productRepository.delete(product);
-        logger.info("Đã xóa sản phẩm với ID: {} bởi cửa hàng: {}", id, storeId);
+        // Soft delete: keep the image for historical references
+        product.setDeleted(true);
+        product.setActive(false);
+        productRepository.save(product);
+        
+        logger.info("Đã xóa (soft delete) sản phẩm với ID: {} bởi cửa hàng: {}", id, storeId);
     }
 
     @Override
