@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa Hàng Của Tôi - HyperBuy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .store-header-banner {
+            background: linear-gradient(135deg, #1e293b, #3b82f6);
+            color: white;
+            padding: 60px 0 40px;
+            margin-top: 60px; /* Offset for fixed nav */
+            text-align: center;
+            border-bottom-left-radius: 32px;
+            border-bottom-right-radius: 32px;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .store-header-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulseBg 10s infinite;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+
+        .store-avatar {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #3b82f6;
+            margin: 0 auto 15px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .store-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .store-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        .store-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .store-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .store-content {
+            max-width: 1200px;
+            margin: -30px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .store-tabs {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .tab-controls button {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .tab-controls button.active {
+            color: #3b82f6;
+        }
+
+        .tab-controls button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+
+        .store-actions .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .store-actions .btn-add {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .store-actions .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .store-actions .btn-back {
+            background: #e2e8f0;
+            color: #334155;
+            margin-left: 10px;
+        }
+
+        .store-actions .btn-back:hover {
+            background: #cbd5e1;
+        }
+
+        /* Products Grid wrapper */
+        .products-grid-wrapper {
+            background: transparent;
+        }
+        
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        /* ===== PRODUCT GRID ENHANCED ===== */
+        .product-grid-enhanced {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+        }
+        .product-card-v2 {
+            background: var(--panel-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.22s, box-shadow 0.22s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .product-card-v2:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(99,102,241,0.15);
+            border-color: #a5b4fc;
+        }
+        .product-card-v2 .img-wrap {
+            position: relative;
+            overflow: hidden;
+            background: #f3f4f6;
+        }
+        .product-card-v2 img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .product-card-v2:hover img { transform: scale(1.05); }
+        .product-card-v2 .card-badge {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .product-card-v2 .card-body {
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .product-card-v2 .card-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+        .product-card-v2 .card-price {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #ef4444;
+        }
+        .product-card-v2 .card-footer {
+            padding: 0 14px 14px;
+            margin-top: auto;
+        }
+        .product-card-v2 .btn-add {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            color: #fff;
+            border: none;
+            padding: 9px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .product-card-v2 .btn-add:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .product-grid-enhanced { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        }
+        @media (max-width: 480px) {
+            .product-grid-enhanced { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+  <nav id="main-navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul id="main-nav" class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
+        <li><a href="products.html" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+        <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Hồ Sơ</a></li>
+        <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
+        <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i class="fas fa-cogs"></i> Quản Trị</a></li>
+        <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
+        <li id="nav-cart-link-li">
+          <a href="cart.html" class="nav-link">
+            <i class="fas fa-shopping-cart"></i> Giỏ Hàng
+            <span class="cart-item-count-nav" style="display:none;"></span>
+          </a>
+        </li>
+        <li id="nav-notification-bell" style="display:none; position:relative;">
+          <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
+            <i class="fas fa-bell"></i>
+            <span id="notification-count" class="notification-badge" style="display:none;"></span>
+          </a>
+          <div id="notification-dropdown" class="notification-list-dropdown">
+            <div class="notification-dropdown-header">Thông báo</div>
+            <ul id="notification-list-items" class="notification-list">
+              <li><a class="dropdown-item-notif">Không có thông báo nào.</a></li>
+            </ul>
+            <div class="notification-dropdown-footer">
+              <a href="notifications.html" class="view-all-notifications">Xem tất cả</a>
+            </div>
+          </div>
+        </li>
+        <li id="nav-login"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
+        <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a></li>
+        <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<div class="store-header-banner">
+    <div class="store-avatar">
+        <i class="fas fa-store"></i>
+    </div>
+    <h1 class="store-title" id="store-name">Cửa Hàng Của <span id="store-username-placeholder">...</span></h1>
+    <div class="store-badges">
+        <div class="store-badge"><i class="fas fa-check-circle"></i> Người Bán Chính Thức</div>
+        <div class="store-badge" id="store-email-badge"><i class="fas fa-envelope"></i> Liên hệ</div>
+    </div>
+    <div class="store-stats">
+        <div class="stat-item">
+            <div class="stat-value" id="store-total-products">-</div>
+            <div class="stat-label">Sản Phẩm</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">5.0</div>
+            <div class="stat-label">Đánh Giá</div>
+        </div>
+    </div>
+</div>
+
+<div class="store-content">
+    <div class="store-tabs">
+        <div class="tab-controls">
+            <button class="active">Tất Cả Sản Phẩm</button>
+        </div>
+        <div class="store-actions">
+            <a href="add-product.html" class="btn btn-add"><i class="fas fa-plus"></i> Đăng Sản Phẩm Mới</a>
+            <a href="profile.html" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay lại</a>
+        </div>
+    </div>
+
+    <div class="products-grid-wrapper">
+        <div id="store-products-grid" class="product-grid-enhanced">
+            <!-- Loading state directly inside the grid or replaced by JS -->
+            <div class="loading-state" style="grid-column: 1 / -1;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #3b82f6; margin-bottom: 20px;"></i>
+                <p>Đang tải danh sách sản phẩm cửa hàng...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>&copy; <span id="current-year"></span> HyperBuy. Mọi quyền được bảo lưu.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    document.getElementById("current-year").textContent = new Date().getFullYear();
+    
+    if (!isLoggedIn()) {
+        alert("Bạn chưa đăng nhập!");
+        location.href = "login.html";
+        return;
+    }
+
+    const user = await loadProfileData();
+    if (!user) {
+        alert("Lỗi tải thông tin chủ cửa hàng!");
+        return;
+    }
+    const username = user.username || "";
+    const email = user.email || "";
+    localStorage.setItem("username", username);
+    localStorage.setItem("email", email);
+    
+    document.getElementById('store-username-placeholder').textContent = username;
+    document.getElementById('store-email-badge').innerHTML = `<i class="fas fa-envelope"></i> ${email}`;
+
+    // Load store products
+    const gridEl = document.getElementById("store-products-grid");
+    try {
+        let storeId = localStorage.getItem('userStoreId');
+        if (!storeId && typeof fetchAndStoreMyStoreId === 'function') {
+            storeId = await fetchAndStoreMyStoreId();
+        }
+        if (!storeId) throw new Error("Không lấy được mã cửa hàng (storeId).");
+
+        const result = await callApi(
+            PRODUCT_API_BASE_URL,
+            `/products/store/${storeId}?page=0&size=50`,
+            'GET'
+        );
+
+        if (!result.ok || !result.data) {
+            throw new Error(result.error || "Không thể tải danh sách sản phẩm.");
+        }
+
+        const products = result.data;
+        document.getElementById('store-total-products').textContent = products.length;
+
+        if (products.length === 0) {
+            gridEl.className = ""; // Remove grid class for empty state
+            gridEl.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <p>Cửa hàng chưa có sản phẩm nào.</p>
+                    <a href="add-product.html" class="btn btn-add" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block;">Đăng sản phẩm đầu tiên</a>
+                </div>
+            `;
+            return;
+        }
+
+        // Render products using the nice V2 template manually or reuse renderProducts if available globally
+        gridEl.innerHTML = products.map(p => `
+            <div class="product-card-v2" onclick="window.location.href='product-detail.html?id=${p.id || p.productId}'" style="cursor:pointer;">
+                <div class="img-wrap">
+                    <img src="${p.imageUrl || 'images/default-product.png'}" alt="${p.name}" style="width:100%; height:200px; object-fit:cover;">
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title" style="font-size: 1rem; font-weight: 600; margin: 10px 0;">${p.name}</h4>
+                    <p class="card-price" style="font-weight: 700; color: #ef4444; font-size: 1.1rem; margin: 5px 0;">${(p.price || 0).toLocaleString('vi-VN')} đ</p>
+                </div>
+                <div class="card-actions" style="padding: 0 15px 15px;">
+                    <button class="btn-add-cart" onclick="event.stopPropagation(); window.location.href='edit-product.html?id=${p.id || p.productId}'" style="background: #e2e8f0; color: #334155; width: 100%; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </button>
+                    ${p.status === 'ACTIVE' 
+                        ? `<button onclick="event.stopPropagation(); deactivateProduct(${p.id || p.productId})" style="background:#fecdd3; color:#be123c; width:100%; border:none; padding:8px; border-radius:6px; margin-top:5px; cursor:pointer;"><i class="fas fa-ban"></i> Ngừng bán</button>`
+                        : `<button onclick="event.stopPropagation(); activateProduct(${p.id || p.productId})" style="background:#dcfce7; color:#15803d; width:100%; border:none; padding:8px; border-radius:6px; margin-top:5px; cursor:pointer;"><i class="fas fa-check"></i> Mở bán</button>`
+                    }
+                </div>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error(err);
+        gridEl.className = "";
+        gridEl.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle" style="color:#ef4444;"></i>
+                <p>Lỗi: ${err.message}</p>
+            </div>
+        `;
+    }
+});
+
+async function deactivateProduct(id) {
+    if(!confirm("Bạn có chắc muốn ngừng bán sản phẩm này?")) return;
+    try {
+        let storeId = localStorage.getItem("userStoreId");
+        if (!storeId) throw new Error("Không có storeId");
+        const headers = { "X-Store-Id": storeId };
+        const result = await callApi(PRODUCT_API_BASE_URL, `/products/${id}/deactivate`, 'PATCH', null, true, false, headers);
+        if (result.ok) {
+            alert("Đã ngừng bán sản phẩm.");
+            location.reload();
+        } else {
+            alert("Lỗi: " + result.error);
+        }
+    } catch(e) {
+        console.error(e);
+        alert("Lỗi hệ thống");
+    }
+}
+
+async function activateProduct(id) {
+    if(!confirm("Bạn có chắc muốn mở bán lại sản phẩm này?")) return;
+    try {
+        let storeId = localStorage.getItem("userStoreId");
+        if (!storeId) throw new Error("Không có storeId");
+        const headers = { "X-Store-Id": storeId };
+        const result = await callApi(PRODUCT_API_BASE_URL, `/products/${id}/activate`, 'PATCH', null, true, false, headers);
+        if (result.ok) {
+            alert("Đã mở bán sản phẩm.");
+            location.reload();
+        } else {
+            alert("Lỗi: " + result.error);
+        }
+    } catch(e) {
+        console.error(e);
+        alert("Lỗi hệ thống");
+    }
+}
+</script>
+</body>
+</html>

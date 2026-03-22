@@ -3,104 +3,449 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HyperBuy - Sản phẩm</title>
+  <title>HyperBuy – Sản Phẩm</title>
+  <meta name="description" content="Khám phá hàng ngàn sản phẩm chất lượng tại HyperBuy." />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ===== PAGE BANNER ===== */
+    .page-banner {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      padding: 36px 5%;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .page-banner-inner {
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .page-banner h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .page-banner p {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.93rem;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 10px;
+    }
+    .breadcrumb a { color: rgba(255,255,255,0.8); }
+    .breadcrumb a:hover { color: #fff; }
+    .breadcrumb i { font-size: 0.65rem; }
+
+    /* ===== LAYOUT ===== */
+    .products-layout {
+      display: flex;
+      gap: 24px;
+      max-width: 1280px;
+      margin: 32px auto;
+      width: 92%;
+      align-items: flex-start;
+    }
+
+    /* ===== FILTER SIDEBAR ===== */
+    .filter-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--panel-bg);
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      position: sticky;
+      top: 80px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .filter-sidebar-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b7280;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .filter-sidebar-title i { color: #6366f1; }
+
+    /* Filter group */
+    .filter-group { margin-bottom: 22px; }
+    .filter-group-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-group-label i { color: #6366f1; font-size: 0.75rem; }
+
+    .filter-sidebar input[type="text"],
+    .filter-sidebar input[type="number"],
+    .filter-sidebar select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.87rem;
+      font-family: inherit;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .filter-sidebar input:focus,
+    .filter-sidebar select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .price-range {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .price-range input { flex: 1; }
+    .price-range span { color: var(--text-secondary); font-size: 0.85rem; flex-shrink: 0; }
+
+    .filter-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
+    .btn-filter-apply {
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: all 0.2s;
+    }
+    .btn-filter-apply:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-filter-reset {
+      background: #f3f4f6;
+      color: var(--text-secondary);
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: all 0.2s;
+    }
+    .btn-filter-reset:hover { background: #e5e7eb; color: var(--text-primary); }
+
+    /* ===== PRODUCTS MAIN ===== */
+    .products-main { flex: 1; min-width: 0; }
+
+    /* Top bar */
+    .products-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 18px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .products-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .products-topbar-left h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .products-topbar-left .count-badge {
+      background: #ede9fe;
+      color: #6366f1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .products-topbar-right { display: flex; align-items: center; gap: 10px; }
+    .sort-label { font-size: 0.83rem; color: var(--text-secondary); font-weight: 500; }
+
+    /* Product grid */
+    .product-grid-v2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 20px;
+    }
+
+    /* Product card */
+    .product-card-v2 {
+      background: var(--panel-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card-v2:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 36px rgba(99,102,241,0.14);
+      border-color: #a5b4fc;
+    }
+    .product-card-v2 .img-wrap {
+      position: relative;
+      overflow: hidden;
+      background: #f9fafb;
+    }
+    .product-card-v2 img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .product-card-v2:hover img { transform: scale(1.06); }
+    .product-card-v2 .card-body {
+      padding: 12px 14px 4px;
+      flex: 1;
+    }
+    .product-card-v2 .card-title {
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+    .product-card-v2 .card-price {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ef4444;
+    }
+    .product-card-v2 .card-actions {
+      padding: 10px 14px 14px;
+    }
+    .product-card-v2 .btn-add-cart {
+      width: 100%;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: #fff;
+      border: none;
+      padding: 9px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .product-card-v2 .btn-add-cart:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Empty / loading states */
+    .state-box {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+    .state-box i { font-size: 2.8rem; opacity: 0.25; margin-bottom: 12px; display: block; }
+    .state-box p { font-size: 0.95rem; }
+
+    /* Mobile filter toggle */
+    .mobile-filter-btn {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      background: #f3f4f6;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+    .mobile-filter-btn:hover { background: #e5e7eb; }
+    .filter-sidebar.mobile-visible { display: block !important; }
+
+    @media (max-width: 900px) {
+      .products-layout { flex-direction: column; width: 95%; margin: 20px auto; }
+      .filter-sidebar { position: static; max-height: none; width: 100%; display: none; }
+      .mobile-filter-btn { display: flex; }
+      .product-grid-v2 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+    @media (max-width: 480px) {
+      .product-grid-v2 { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
 <body>
+
   <!-- ===== HEADER ===== -->
-<header class="main-header">
-    <nav id="main-navbar" class="nav-elevated">
+  <header class="main-header">
+    <nav id="main-navbar">
       <div class="container nav-container">
-        <div class="header-left">
-          <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
-        </div>
-
+        <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+          <i class="fas fa-bars"></i>
+        </button>
         <ul id="main-nav" class="nav-links">
-          <li><a href="index.html" id="nav-home" class="nav-link">Trang Chủ</a></li>
-          <li><a href="products.html" id="nav-products" class="nav-link">Sản Phẩm</a></li>
-          
-          <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link">Hồ Sơ</a></li>
-          <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link nav-active">Đơn Hàng</a></li>
-
-          <!-- ⭐ QUẢN TRỊ (ID CHUẨN) -->
-          <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link">Quản Trị</a></li>
-          <li><a href="minigame.html" class="nav-link">MiniGame</a></li>
+          <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
+          <li><a href="products.html" id="nav-products" class="nav-link active"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+          <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Hồ Sơ</a></li>
+          <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
+          <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i class="fas fa-cogs"></i> Quản Trị</a></li>
+          <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
           <li id="nav-cart-link-li">
             <a href="cart.html" class="nav-link">
               <i class="fas fa-shopping-cart"></i> Giỏ Hàng
               <span class="cart-item-count-nav" style="display:none;"></span>
             </a>
           </li>
-
-          <!-- 🔔 THÔNG BÁO -->
           <li id="nav-notification-bell" style="display:none; position:relative;">
-              <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
-                  <i class="fas fa-bell"></i>
-                  <span id="notification-count" class="notification-badge" style="display:none;"></span>
-              </a>
-
-              <div id="notification-dropdown" class="notification-list-dropdown">
-                  <div class="notification-dropdown-header">Thông báo</div>
-                  <ul id="notification-list-items" class="notification-list">
-                      <li><a class="dropdown-item-notif">Không có thông báo nào.</a></li>
-                  </ul>
-                  <div class="notification-dropdown-footer">
-                      <a href="notifications.html" class="view-all-notifications">Xem tất cả</a>
-                  </div>
+            <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
+              <i class="fas fa-bell"></i>
+              <span id="notification-count" class="notification-badge" style="display:none;"></span>
+            </a>
+            <div id="notification-dropdown" class="notification-list-dropdown">
+              <div class="notification-dropdown-header">Thông báo</div>
+              <ul id="notification-list-items" class="notification-list">
+                <li><a class="dropdown-item-notif">Không có thông báo nào.</a></li>
+              </ul>
+              <div class="notification-dropdown-footer">
+                <a href="notifications.html" class="view-all-notifications">Xem tất cả</a>
               </div>
+            </div>
           </li>
-
-          <li id="nav-login"><a href="login.html" class="nav-link">Đăng Nhập</a></li>
-          <li id="nav-register"><a href="register.html" class="nav-link">Đăng Ký</a></li>
+          <li id="nav-login"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
+          <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a></li>
+          <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
         </ul>
       </div>
     </nav>
-</header>
+  </header>
+
+  <!-- ===== PAGE BANNER ===== -->
+  <div class="page-banner">
+    <div class="page-banner-inner">
+      <div class="breadcrumb">
+        <a href="index.html">Trang chủ</a>
+        <i class="fas fa-chevron-right"></i>
+        <span>Sản phẩm</span>
+      </div>
+      <h1>Khám Phá Sản Phẩm</h1>
+      <p>Tìm kiếm và lọc hàng ngàn sản phẩm chất lượng tốt nhất</p>
+    </div>
+  </div>
 
   <!-- ===== MAIN CONTENT ===== -->
-  <main class="container product-page">
-    <section class="filter-section">
-      <h2>🔍 Tìm kiếm & Lọc Sản phẩm</h2>
+  <div class="products-layout">
+
+    <!-- Mobile filter toggle -->
+    <button class="mobile-filter-btn" id="mobile-filter-toggle" onclick="document.querySelector('.filter-sidebar').classList.toggle('mobile-visible')">
+      <i class="fas fa-sliders-h"></i> Bộ lọc
+    </button>
+
+    <!-- Filter Sidebar -->
+    <aside class="filter-sidebar" id="product-filter-sidebar">
+      <div class="filter-sidebar-title"><i class="fas fa-sliders-h"></i> Bộ Lọc</div>
+
       <form id="product-filter-form">
-        <label for="name">Tên sản phẩm:</label>
-        <input type="text" id="name" name="name" placeholder="Nhập từ khóa..." />
-
-        <label for="category">Danh mục:</label>
-        <select id="category" name="category">
-          <option value="">-- Tất cả danh mục --</option>
-        </select>
-
-        <label>Khoảng giá (VND):</label>
-        <div class="price-filter">
-          <input type="number" id="minPrice" placeholder="Từ" />
-          <span>-</span>
-          <input type="number" id="maxPrice" placeholder="Đến" />
+        <!-- Search -->
+        <div class="filter-group">
+          <div class="filter-group-label"><i class="fas fa-search"></i> Tìm kiếm</div>
+          <input type="text" id="name" name="name" placeholder="Nhập tên sản phẩm..." />
         </div>
 
-        <label for="sort">Sắp xếp:</label>
-        <select id="sort">
-          <option value="">Mặc định</option>
-          <option value="priceAsc">Giá tăng dần</option>
-          <option value="priceDesc">Giá giảm dần</option>
-        </select>
+        <!-- Category -->
+        <div class="filter-group">
+          <div class="filter-group-label"><i class="fas fa-layer-group"></i> Danh mục</div>
+          <select id="category" name="category">
+            <option value="">-- Tất cả danh mục --</option>
+          </select>
+        </div>
 
-        <div class="filter-buttons">
-          <button type="submit" class="btn-primary">Lọc Sản Phẩm</button>
-          <button type="reset" class="btn-secondary">Reset Bộ Lọc</button>
+        <!-- Price range -->
+        <div class="filter-group">
+          <div class="filter-group-label"><i class="fas fa-tag"></i> Khoảng giá (VND)</div>
+          <div class="price-range">
+            <input type="number" id="minPrice" placeholder="Từ" />
+            <span>–</span>
+            <input type="number" id="maxPrice" placeholder="Đến" />
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="filter-group">
+          <div class="filter-group-label"><i class="fas fa-sort"></i> Sắp xếp</div>
+          <select id="sort">
+            <option value="">Mặc định</option>
+            <option value="priceAsc">Giá tăng dần</option>
+            <option value="priceDesc">Giá giảm dần</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button type="submit" class="btn-filter-apply"><i class="fas fa-filter"></i> Lọc Sản Phẩm</button>
+          <button type="reset" class="btn-filter-reset"><i class="fas fa-undo"></i> Reset Bộ Lọc</button>
         </div>
       </form>
-    </section>
+    </aside>
 
-    <section id="product-results">
-      <h2>Tất cả sản phẩm</h2>
-      <div id="product-list" class="product-grid">
-        <p>Đang tải sản phẩm...</p>
+    <!-- Products -->
+    <div class="products-main">
+      <div class="products-topbar">
+        <div class="products-topbar-left">
+          <h2>Tất cả sản phẩm</h2>
+          <span class="count-badge" id="product-count-badge">...</span>
+        </div>
       </div>
-    </section>
-  </main>
+
+      <div class="product-grid-v2" id="product-list">
+        <div class="state-box">
+          <i class="fas fa-box-open"></i>
+          <p>Đang tải sản phẩm...</p>
+        </div>
+      </div>
+      
+      <!-- Phân trang -->
+      <div id="pagination-controls" class="pagination-container"></div>
+    </div>
+
+  </div><!-- /.products-layout -->
 
   <!-- ===== FOOTER ===== -->
   <footer>
@@ -109,52 +454,67 @@
     </div>
   </footer>
 
-<script src="js/main.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('main-nav').classList.toggle('open');
+    });
 
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Load danh mục vào select #category
-    await loadCategoriesAndBuildMap("category");
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 1. Danh mục
+      await loadCategoriesAndBuildMap("category");
 
-    // 2. Lấy tham số trên URL
-    const urlParams       = new URLSearchParams(window.location.search);
-    const nameFromUrl     = urlParams.get("name") || "";
-    // 👉 HỖ TRỢ CẢ ?category= VÀ ?categoryId=
-    const categoryFromUrl = urlParams.get("category") || urlParams.get("categoryId") || "";
-    const minFromUrl      = urlParams.get("minPrice") || "";
-    const maxFromUrl      = urlParams.get("maxPrice") || "";
-    const sortFromUrl     = urlParams.get("sort") || "";
+      // 2. Tham số URL
+      const urlParams       = new URLSearchParams(window.location.search);
+      const nameFromUrl     = urlParams.get("name") || "";
+      const categoryFromUrl = urlParams.get("category") || urlParams.get("categoryId") || "";
+      const minFromUrl      = urlParams.get("minPrice") || "";
+      const maxFromUrl      = urlParams.get("maxPrice") || "";
+      const sortFromUrl     = urlParams.get("sort") || "";
 
-    const nameInput      = document.getElementById("name");
-    const categorySelect = document.getElementById("category");
-    const minPriceInput  = document.getElementById("minPrice");
-    const maxPriceInput  = document.getElementById("maxPrice");
-    const sortSelect     = document.getElementById("sort");
+      const nameInput      = document.getElementById("name");
+      const categorySelect = document.getElementById("category");
+      const minPriceInput  = document.getElementById("minPrice");
+      const maxPriceInput  = document.getElementById("maxPrice");
+      const sortSelect     = document.getElementById("sort");
 
-    if (nameInput)      nameInput.value      = nameFromUrl;
-    if (categorySelect && categoryFromUrl) categorySelect.value = categoryFromUrl;
-    if (minPriceInput)  minPriceInput.value  = minFromUrl;
-    if (maxPriceInput)  maxPriceInput.value  = maxFromUrl;
-    if (sortSelect && sortFromUrl) sortSelect.value = sortFromUrl;
+      if (nameInput)      nameInput.value      = nameFromUrl;
+      if (categorySelect && categoryFromUrl) categorySelect.value = categoryFromUrl;
+      if (minPriceInput)  minPriceInput.value  = minFromUrl;
+      if (maxPriceInput)  maxPriceInput.value  = maxFromUrl;
+      if (sortSelect && sortFromUrl) sortSelect.value = sortFromUrl;
 
-    // 3. Submit form lọc
-    const filterForm = document.getElementById("product-filter-form");
-    if (filterForm) {
-      filterForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        await fetchProductsByFilters(0);
-      });
+      // 3. Filter form events
+      const filterForm = document.getElementById("product-filter-form");
+      if (filterForm) {
+        filterForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          await fetchProductsByFilters(0);
+        });
+        filterForm.addEventListener("reset", async (e) => {
+          e.preventDefault();
+          window.history.replaceState({}, "", window.location.pathname);
+          setTimeout(() => fetchProductsByFilters(0), 0);
+        });
+      }
 
-      filterForm.addEventListener("reset", async (e) => {
-        e.preventDefault();
-        window.history.replaceState({}, "", window.location.pathname);
-        setTimeout(() => fetchProductsByFilters(0), 0);
-      });
+      // 4. Initial load
+      await fetchProductsByFilters(0);
+    });
+
+    // Update product count badge after products load
+    const origFetch = window.fetchProductsByFilters;
+    if (typeof origFetch === 'function') {
+      window.fetchProductsByFilters = async function(...args) {
+        await origFetch.apply(this, args);
+        const grid = document.getElementById('product-list');
+        const countBadge = document.getElementById('product-count-badge');
+        if (grid && countBadge) {
+          const cards = grid.querySelectorAll('.product-card, .product-card-v2, a[href*="product"]');
+          countBadge.textContent = cards.length > 0 ? `${cards.length} sản phẩm` : '...';
+        }
+      };
     }
-
-    // 4. Lần đầu vào trang ⇒ load theo bộ lọc (hoặc theo category từ URL)
-    await fetchProductsByFilters(0);
-  });
-</script>
+  </script>
 </body>
 </html>

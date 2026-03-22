@@ -3,144 +3,536 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HyperBuy - MiniGame</title>
-
+  <title>MiniGame – HyperBuy</title>
+  <meta name="description" content="Chơi MiniGame HyperBuy để nhận điểm thưởng và voucher hấp dẫn mỗi ngày!">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ===== MINIGAME PAGE ===== */
+    .minigame-hero {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #ec4899 100%);
+      padding: 56px 0 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .minigame-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .minigame-hero .hero-content { position: relative; z-index: 1; }
+    .minigame-hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 12px;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    }
+    .minigame-hero p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    .hero-emoji {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      display: block;
+      animation: bounce 2s ease infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Points bar */
+    .points-bar {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 99px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 24px;
+      margin-top: 20px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .points-bar i { color: #fbbf24; }
+    .points-bar #minigame-current-points { font-size: 1.3rem; font-weight: 800; }
+
+    /* ===== GAME SECTIONS ===== */
+    .minigame-content { padding: 0 0 60px; }
+    .minigame-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: -36px; /* overlap hero */
+      padding: 0 28px;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .game-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border: 1px solid #f1f5f9;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+    }
+    .game-card.card-daily::before  { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+    .game-card.card-spin::before   { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+    .game-card.card-flip::before   { background: linear-gradient(90deg, #10b981, #3b82f6); }
+    .game-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.15); }
+
+    .game-card-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+    .game-card.card-daily .game-card-icon  { background: #ede9fe; color: #7c3aed; }
+    .game-card.card-spin .game-card-icon   { background: #fef3c7; color: #d97706; }
+    .game-card.card-flip .game-card-icon   { background: #d1fae5; color: #059669; }
+
+    .game-card h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 8px;
+    }
+    .game-card p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin: 0 0 20px;
+      line-height: 1.5;
+    }
+    .game-card .result-box {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      color: #475569;
+      margin: 12px 0;
+      min-height: 40px;
+      border: 1px solid #e2e8f0;
+      display: none;
+    }
+    .game-card .result-box.show { display: block; }
+    .game-card .result-box.success { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .game-card .result-box.error   { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+
+    /* Buttons */
+    .btn-game {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    .btn-game:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-indigo { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+    .btn-indigo:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-amber  { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
+    .btn-amber:hover:not(:disabled)  { opacity: 0.9; transform: translateY(-1px); }
+    .btn-green  { background: linear-gradient(135deg, #10b981, #3b82f6); color: #fff; }
+    .btn-green:hover:not(:disabled)  { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Card flip buttons */
+    .card-choice-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .btn-card-choice {
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+      border: 2px solid #c4b5fd;
+      border-radius: 14px;
+      padding: 20px 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      color: #5b21b6;
+      font-size: 0.85rem;
+    }
+    .btn-card-choice:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-card-choice .card-emoji { font-size: 1.6rem; }
+    .btn-card-choice:hover:not(:disabled) {
+      transform: translateY(-4px) scale(1.03);
+      background: linear-gradient(135deg, #c4b5fd, #a78bfa);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(99,102,241,0.3);
+    }
+    .btn-card-choice.revealed {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      border-color: #fbbf24;
+      color: #78350f;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0.9); }
+      60%  { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* Spin animation */
+    .spin-icon {
+      display: inline-block;
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .spinning { animation: spin 0.8s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* ===== HISTORY SECTION ===== */
+    .history-section {
+      max-width: 1100px;
+      margin: 32px auto 0;
+      padding: 0 28px;
+    }
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .history-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .history-title i { color: #6366f1; }
+    .history-table-wrap {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .history-table thead th {
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .history-table tbody td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: middle;
+    }
+    .history-table tbody tr:last-child td { border-bottom: none; }
+    .history-table tbody tr:hover { background: #f8fafc; }
+    .reward-badge {
+      display: inline-block;
+      background: #ede9fe;
+      color: #5b21b6;
+      border-radius: 99px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 3px 10px;
+    }
+    .game-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #475569;
+    }
+
+    /* ===== VOUCHER EXCHANGE ===== */
+    .voucher-section {
+      max-width: 1100px;
+      margin: 32px auto 0;
+      padding: 0 28px;
+    }
+    .voucher-section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .voucher-section-title i { color: #f59e0b; }
+    #minigame-voucher-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .voucher-item {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border: 2px dashed #fbbf24;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .voucher-item .voucher-code {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #92400e;
+      letter-spacing: 1px;
+    }
+    .voucher-item .voucher-desc { font-size: 0.85rem; color: #78350f; }
+    .voucher-item .voucher-cost {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #d97706;
+    }
+    .btn-exchange {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: 0.2s;
+    }
+    .btn-exchange:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Reload btn */
+    .btn-reload {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: #64748b;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-reload:hover { background: #f8fafc; border-color: #6366f1; color: #6366f1; }
+
+    @media (max-width: 600px) {
+      .minigame-grid { padding: 0 16px; grid-template-columns: 1fr; }
+      .card-choice-group { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .btn-card-choice { padding: 14px 4px; font-size: 0.78rem; }
+      .history-section, .voucher-section { padding: 0 16px; }
+    }
+  </style>
 </head>
-<body>
-  <!-- HEADER giống các trang khác -->
+<body id="minigame-page">
+
+<!-- NAVBAR -->
 <header class="main-header">
-    <nav id="main-navbar" class="nav-elevated">
-      <div class="container nav-container">
-        <div class="header-left">
-          <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
-        </div>
-
-        <ul id="main-nav" class="nav-links">
-          <li><a href="index.html" id="nav-home" class="nav-link">Trang Chủ</a></li>
-          <li><a href="products.html" id="nav-products" class="nav-link">Sản Phẩm</a></li>
-          
-          <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link">Hồ Sơ</a></li>
-          <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link nav-active">Đơn Hàng</a></li>
-
-          <!-- ⭐ QUẢN TRỊ (ID CHUẨN) -->
-          <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link">Quản Trị</a></li>
-          <li><a href="minigame.html" class="nav-link">MiniGame</a></li>
-          <li id="nav-cart-link-li">
-            <a href="cart.html" class="nav-link">
-              <i class="fas fa-shopping-cart"></i> Giỏ Hàng
-              <span class="cart-item-count-nav" style="display:none;"></span>
-            </a>
-          </li>
-
-          <!-- 🔔 THÔNG BÁO -->
-          <li id="nav-notification-bell" style="display:none; position:relative;">
-              <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
-                  <i class="fas fa-bell"></i>
-                  <span id="notification-count" class="notification-badge" style="display:none;"></span>
-              </a>
-
-              <div id="notification-dropdown" class="notification-list-dropdown">
-                  <div class="notification-dropdown-header">Thông báo</div>
-                  <ul id="notification-list-items" class="notification-list">
-                      <li><a class="dropdown-item-notif">Không có thông báo nào.</a></li>
-                  </ul>
-                  <div class="notification-dropdown-footer">
-                      <a href="notifications.html" class="view-all-notifications">Xem tất cả</a>
-                  </div>
-              </div>
-          </li>
-
-          <li id="nav-login"><a href="login.html" class="nav-link">Đăng Nhập</a></li>
-          <li id="nav-register"><a href="register.html" class="nav-link">Đăng Ký</a></li>
-        </ul>
-      </div>
-    </nav>
+  <nav id="main-navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul id="main-nav" class="nav-links">
+        <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
+        <li><a href="products.html" id="nav-products" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+        <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Hồ Sơ</a></li>
+        <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
+        <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i class="fas fa-cogs"></i> Quản Trị</a></li>
+        <li><a href="minigame.html" class="nav-link nav-active"><i class="fas fa-gamepad"></i> MiniGame</a></li>
+        <li id="nav-cart-link-li">
+          <a href="cart.html" class="nav-link">
+            <i class="fas fa-shopping-cart"></i> Giỏ Hàng
+            <span class="cart-item-count-nav" style="display:none;"></span>
+          </a>
+        </li>
+        <li id="nav-notification-bell" style="display:none; position:relative;">
+          <a href="#" id="notification-bell-link" class="nav-link nav-link-bell" title="Thông báo">
+            <i class="fas fa-bell"></i>
+            <span id="notification-count" class="notification-badge" style="display:none;"></span>
+          </a>
+          <div id="notification-dropdown" class="notification-list-dropdown">
+            <div class="notification-dropdown-header">Thông báo</div>
+            <ul id="notification-list-items" class="notification-list">
+              <li><a class="dropdown-item-notif">Không có thông báo nào.</a></li>
+            </ul>
+            <div class="notification-dropdown-footer">
+              <a href="notifications.html" class="view-all-notifications">Xem tất cả thông báo</a>
+            </div>
+          </div>
+        </li>
+        <li id="nav-login"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
+        <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a></li>
+        <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
 
-  <!-- MAIN -->
-  <main class="container" id="minigame-page" style="margin-top: 24px;">
+<!-- HERO -->
+<section class="minigame-hero">
+  <div class="hero-content container">
+    <span class="hero-emoji">🎮</span>
     <h1>MiniGame HyperBuy</h1>
-    <p>Chơi game để nhận điểm thưởng và voucher 😎</p>
-
-    <!-- DAILY REWARD -->
-    <section class="card" style="margin-top: 16px; padding: 16px;">
-      <h2><i class="fa-solid fa-calendar-check"></i> Điểm danh hàng ngày</h2>
-      <p>Mỗi ngày bạn có thể nhận thưởng 1 lần khi đăng nhập.</p>
-      <button id="btn-daily-reward" class="btn btn-primary">Nhận điểm đăng nhập hôm nay</button>
-    </section>
-
-    <!-- SPIN WHEEL -->
-    <section class="card" style="margin-top: 16px; padding: 16px;">
-      <h2><i class="fa-solid fa-compact-disc"></i> Vòng quay may mắn</h2>
-      <p>Quay để nhận điểm hoặc voucher ngẫu nhiên.</p>
-      <button id="btn-spin-wheel" class="btn btn-success">Quay ngay</button>
-    </section>
-
-    <!-- CARD FLIP -->
-    <section class="card" style="margin-top: 16px; padding: 16px;">
-      <h2><i class="fa-solid fa-clone"></i> Lật thẻ nhận quà</h2>
-      <p>Chọn 1 trong 6 thẻ để nhận phần thưởng bí mật.</p>
-    <div class="card-choice-group">
-    <button class="btn btn-primary btn-card-choice" data-choice="1">Thẻ 1</button>
-    <button class="btn btn-primary btn-card-choice" data-choice="2">Thẻ 2</button>
-    <button class="btn btn-primary btn-card-choice" data-choice="3">Thẻ 3</button>
-    <button class="btn btn-primary btn-card-choice" data-choice="4">Thẻ 4</button>
-    <button class="btn btn-primary btn-card-choice" data-choice="5">Thẻ 5</button>
-    <button class="btn btn-primary btn-card-choice" data-choice="6">Thẻ 6</button>
-  </div>
-    </section>
-
-    <!-- HISTORY -->
-    <section class="card" style="margin-top: 16px; padding: 16px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhận quà</h2>
-        <button id="btn-reload-history" class="btn btn-secondary btn-sm">Tải lại</button>
-      </div>
-
-      <div class="table-wrapper" style="margin-top: 12px; overflow-x:auto;">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Loại game</th>
-              <th>Phần thưởng</th>
-              <th>Thời gian</th>
-            </tr>
-          </thead>
-          <tbody id="minigame-history-body">
-            <tr><td colspan="4">Đang tải...</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <section class="card" style="margin-top: 16px; padding: 16px;">
-      <section class="card" style="margin-top: 16px; padding: 16px;">
-        <h2><i class="fa-solid fa-ticket"></i> Đổi điểm lấy Voucher</h2>
-
-        <p>Điểm hiện tại: <b id="minigame-current-points">0</b></p>
-        <p style="margin-top: 4px; color:#666;">
-          Chọn một voucher bên dưới để đổi bằng điểm của bạn.
-        </p>
-
-        <!-- JS sẽ render danh sách voucher tại đây -->
-        <div id="minigame-voucher-list" style="margin-top: 12px;">
-          <!-- Ví dụ:
-          <div class="minigame-voucher-row">...</div>
-          -->
-        </div>
-      </section>
-</section>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container">
-      <p>&copy; <span id="current-year"></span> HyperBuy. Mọi quyền được bảo lưu.</p>
+    <p>Chơi game mỗi ngày – Nhận điểm thưởng & voucher hấp dẫn!</p>
+    <div class="points-bar">
+      <i class="fas fa-star"></i>
+      Điểm của bạn: <span id="minigame-current-points">0</span> điểm
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script src="js/main.js"></script>
+<!-- GAME CARDS -->
+<div class="minigame-content">
+  <div class="minigame-grid">
+
+    <!-- Card 1: Daily Reward -->
+    <div class="game-card card-daily">
+      <div class="game-card-icon"><i class="fas fa-calendar-check"></i></div>
+      <h2>Điểm danh hàng ngày</h2>
+      <p>Đăng nhập mỗi ngày để nhận điểm miễn phí. Mỗi ngày chỉ nhận được 1 lần!</p>
+      <button id="btn-daily-reward" class="btn-game btn-indigo">
+        <i class="fas fa-gift"></i> Nhận điểm hôm nay
+      </button>
+      <div class="result-box" id="daily-result"></div>
+    </div>
+
+    <!-- Card 2: Spin Wheel -->
+    <div class="game-card card-spin">
+      <div class="game-card-icon">
+        <span class="spin-icon" id="spin-icon">🎰</span>
+      </div>
+      <h2>Vòng quay may mắn</h2>
+      <p>Quay vòng quay để nhận điểm hoặc voucher ngẫu nhiên. Vận may đang đợi bạn!</p>
+      <button id="btn-spin-wheel" class="btn-game btn-amber">
+        <i class="fas fa-compact-disc"></i> Quay ngay!
+      </button>
+      <div class="result-box" id="spin-result"></div>
+    </div>
+
+    <!-- Card 3: Card Flip -->
+    <div class="game-card card-flip">
+      <div class="game-card-icon"><i class="fas fa-clone"></i></div>
+      <h2>Lật thẻ nhận quà</h2>
+      <p>Chọn 1 trong 6 thẻ bí mật để nhận phần thưởng. Mỗi thẻ ẩn chứa điều bất ngờ!</p>
+      <div class="card-choice-group" id="card-choice-group">
+        <button class="btn-card-choice" data-choice="1"><span class="card-emoji">🃏</span>Thẻ 1</button>
+        <button class="btn-card-choice" data-choice="2"><span class="card-emoji">🃏</span>Thẻ 2</button>
+        <button class="btn-card-choice" data-choice="3"><span class="card-emoji">🃏</span>Thẻ 3</button>
+        <button class="btn-card-choice" data-choice="4"><span class="card-emoji">🃏</span>Thẻ 4</button>
+        <button class="btn-card-choice" data-choice="5"><span class="card-emoji">🃏</span>Thẻ 5</button>
+        <button class="btn-card-choice" data-choice="6"><span class="card-emoji">🃏</span>Thẻ 6</button>
+      </div>
+      <div class="result-box" id="flip-result"></div>
+    </div>
+
+  </div>
+
+  <!-- VOUCHER EXCHANGE -->
+  <div class="voucher-section">
+    <div class="voucher-section-title">
+      <i class="fas fa-ticket-alt"></i> Đổi điểm lấy Voucher
+    </div>
+    <div id="minigame-voucher-list">
+      <p style="color:#94a3b8; font-size:0.9rem;">Đang tải danh sách voucher...</p>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-section">
+    <div class="history-header">
+      <div class="history-title">
+        <i class="fas fa-clock-rotate-left"></i> Lịch sử nhận quà
+      </div>
+      <button id="btn-reload-history" class="btn-reload">
+        <i class="fas fa-rotate-right"></i> Tải lại
+      </button>
+    </div>
+    <div class="history-table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Loại Game</th>
+            <th>Phần Thưởng</th>
+            <th>Thời Gian</th>
+          </tr>
+        </thead>
+        <tbody id="minigame-history-body">
+          <tr><td colspan="4" style="text-align:center; padding:24px; color:#94a3b8;">Đang tải lịch sử...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /.minigame-content -->
+
+<footer>
+  <div class="container">
+    <p>&copy; <span id="current-year"></span> HyperBuy. Mọi quyền được bảo lưu.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+  // Hamburger nav toggle
+  document.getElementById('nav-toggle')?.addEventListener('click', () => {
+    document.getElementById('main-nav').classList.toggle('open');
+  });
+
+  // Load voucher list after main.js runs
+  // initMinigamePage() is already called automatically by main.js on minigame.html
+  // We just need to also init the voucher exchange section
+  document.addEventListener('DOMContentLoaded', () => {
+    // Small delay to ensure main.js has initialized
+    setTimeout(() => {
+      if (typeof initMinigameVoucherSection === 'function') {
+        initMinigameVoucherSection();
+      }
+      if (typeof updateMinigameSummaryUI === 'function') {
+        updateMinigameSummaryUI();
+      }
+    }, 500);
+  });
+</script>
 </body>
 </html>

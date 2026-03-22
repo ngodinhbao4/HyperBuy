@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Đánh giá của tôi</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         .rating-item {
             padding: 14px;
@@ -28,6 +28,55 @@
         .delete-btn:hover {
             background: #d9363e;
         }
+
+        .edit-btn {
+            background: #3b82f6;
+            color: #fff;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .edit-btn:hover { background: #2563eb; }
+
+        /* ⭐ POPUP REVIEW */
+        #review-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .review-modal-content {
+            background: #fff;
+            width: 350px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .review-modal-content select,
+        .review-modal-content textarea {
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .review-modal-content button {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #btn-submit-review {
+            background: #10b981;
+            color: white;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +85,28 @@
 
 <div id="my-ratings-box" style="padding: 12px;">Đang tải...</div>
 
-<script src="/js/main.js"></script>
+<!-- ⭐ POPUP ĐÁNH GIÁ -->
+<div id="review-modal">
+  <div class="review-modal-content">
+    <h3 style="margin-top:0">Cập nhật đánh giá</h3>
+
+    <label for="review-stars">Số sao:</label>
+    <select id="review-stars">
+      <option value="5">5 ★ - Rất tốt</option>
+      <option value="4">4 ★ - Tốt</option>
+      <option value="3">3 ★ - Bình thường</option>
+      <option value="2">2 ★ - Tệ</option>
+      <option value="1">1 ★ - Rất tệ</option>
+    </select>
+
+    <label for="review-comment" style="display:block; margin-top:10px;">Nhận xét:</label>
+    <textarea id="review-comment" rows="3" placeholder="Hãy chia sẻ cảm nhận của bạn..."></textarea>
+
+    <button type="button" id="btn-submit-review">Lưu đánh giá</button>
+    <button type="button" id="btn-close-review">Hủy</button>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
 </body>
 </html>

@@ -91,7 +91,7 @@ function updateNav() {
     const navMyOrders = document.getElementById('nav-my-orders');
     const navNotificationBell = document.getElementById('nav-notification-bell');
     const navAddProduct = document.getElementById('nav-add-product');
-    const navAdminDashboard = document.getElementById('nav-admin-dashboard');
+    const navAdminDashboard = document.getElementById('nav-admin-dashboard') || document.getElementById('nav-admin-dashboard-li');
 
     if(navLogin) navLogin.style.display = loggedIn ? 'none' : 'block';
     if(navRegister) navRegister.style.display = loggedIn ? 'none' : 'block';
@@ -785,11 +785,9 @@ async function loadProducts(containerId, filters = {}) {
             container.innerHTML = '';
 
             products.forEach(p => {
-                // ----- Tạo card sản phẩm -----
                 const card = document.createElement('div');
-                card.className = 'product-card';   // 👈 rất quan trọng: khớp CSS
-
-                // ----- Xử lý URL ảnh -----
+                card.className = 'product-card-v2';
+                
                 let imgUrl = `https://placehold.co/300x200/EFEFEF/AAAAAA&text=${encodeURIComponent(p.name || 'SP')}`;
                 const imageUrlFromApi = p.imageUrl;
 
@@ -803,31 +801,19 @@ async function loadProducts(containerId, filters = {}) {
                     }
                 }
 
-                const pLink = `product-detail.html?id=${p.id}`;
-
                 card.innerHTML = `
-                    <a href="${pLink}" class="product-link">
-                        <img
-                            src="${imgUrl}"
-                            alt="${p.name || 'Sản phẩm'}"
-                            style="width:100%;height:200px;object-fit:cover;display:block;border-radius:8px;"
-                            onerror="this.onerror=null;this.src='https://placehold.co/300x200/EFEFEF/AAAAAA&text=Ảnh lỗi';"
-                        >
-                        <h3 class="product-title">
-                            ${p.name || 'Tên SP không rõ'}
-                        </h3>
-                    </a>
-                    <p class="product-price">
-                        ${(parseFloat(p.price) || 0).toLocaleString('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND'
-                        })}
-                    </p>
-                    <button
-                        class="btn btn-primary btn-add-to-cart"
-                        data-product-id="${p.id}">
-                        Thêm vào giỏ
-                    </button>
+                    <div class="img-wrap" onclick="window.location.href='product-detail.html?id=${p.id}'" style="cursor:pointer;">
+                        <img src="${imgUrl}" onerror="this.onerror=null;this.src='https://placehold.co/300x200/EFEFEF/AAAAAA&text=Ảnh lỗi';">
+                    </div>
+                    <div class="card-body" onclick="window.location.href='product-detail.html?id=${p.id}'" style="cursor:pointer;">
+                        <h3 class="card-title">${p.name || 'Tên SP không rõ'}</h3>
+                        <div class="card-price">${(parseFloat(p.price) || 0).toLocaleString('vi-VN')} đ</div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-add btn-add-to-cart" data-product-id="${p.id}" onclick="event.stopPropagation(); addToCartAPI(${p.id})">
+                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                        </button>
+                    </div>
                 `;
 
                 container.appendChild(card);
@@ -846,6 +832,51 @@ async function loadProducts(containerId, filters = {}) {
                 Lỗi tải sản phẩm: ${result.data?.message || result.error || `Server error with status ${result.status}`}
             </p>`;
     }
+}
+
+function renderPagination(pageData) {
+    const paginationContainer = document.getElementById('pagination-controls');
+    if (!paginationContainer) return;
+
+    const { number, totalPages, first, last } = pageData;
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    let html = `<div style="display:flex; justify-content:center; gap:8px; margin-top:30px; margin-bottom: 20px;">`;
+    
+    if (!first) {
+        html += `<button onclick="fetchProductsByFilters(${number - 1})" class="btn" style="padding:8px 16px; border:1px solid #ddd; background:#fff; cursor:pointer; border-radius:6px; transition:0.2s;">&laquo; Lùi</button>`;
+    }
+
+    let startPage = Math.max(0, number - 2);
+    let endPage = Math.min(totalPages - 1, number + 2);
+
+    if (startPage > 0) {
+        html += `<button onclick="fetchProductsByFilters(0)" class="btn" style="padding:8px 16px; border:1px solid #ddd; background:#fff; cursor:pointer; border-radius:6px; transition:0.2s;">1</button>`;
+        if (startPage > 1) html += `<span style="padding:8px 16px; color:#888;">...</span>`;
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === number) {
+            html += `<button class="btn" style="padding:8px 16px; border:1px solid #6366f1; background:#6366f1; color:#fff; cursor:default; border-radius:6px;">${i + 1}</button>`;
+        } else {
+            html += `<button onclick="fetchProductsByFilters(${i})" class="btn" style="padding:8px 16px; border:1px solid #ddd; background:#fff; cursor:pointer; border-radius:6px; transition:0.2s;">${i + 1}</button>`;
+        }
+    }
+
+    if (endPage < totalPages - 1) {
+        if (endPage < totalPages - 2) html += `<span style="padding:8px 16px; color:#888;">...</span>`;
+        html += `<button onclick="fetchProductsByFilters(${totalPages - 1})" class="btn" style="padding:8px 16px; border:1px solid #ddd; background:#fff; cursor:pointer; border-radius:6px; transition:0.2s;">${totalPages}</button>`;
+    }
+
+    if (!last) {
+        html += `<button onclick="fetchProductsByFilters(${number + 1})" class="btn" style="padding:8px 16px; border:1px solid #ddd; background:#fff; cursor:pointer; border-radius:6px; transition:0.2s;">Tiến &raquo;</button>`;
+    }
+    
+    html += `</div>`;
+    paginationContainer.innerHTML = html;
 }
 
     // === Guest Recommendations ===
@@ -911,17 +942,54 @@ async function loadHomeRecommendations(limit = 12) {
     if (!container) return;
 
     try {
-        let products = [];
+        // Yêu cầu: Gợi ý sản phẩm dùng API /recommendations/me
+        // Thêm requiresAuth = false (để nó gửi request cho mọi trường hợp, có token hay ko)
+        const result = await callApi(
+            PRODUCT_API_BASE_URL,
+            `/recommendations/me?limit=${limit}`,
+            "GET",
+            null,
+            isLoggedIn()
+        );
 
-        if (isLoggedIn()) {
-            // ✅ Đã đăng nhập -> gọi API khuyến nghị cho user
-            products = await fetchUserRecommendations(limit);
-        } else {
-            // 👤 Chưa đăng nhập -> khuyến nghị guest
-            products = await fetchGuestRecommendations(limit);
+        const products = (result.ok && result.data) ? (result.data.result || []) : [];
+
+        // Nếu API này trả về rỗng do chưa đăng nhập, tự động lấy sản phẩm mới nhất làm fallback?
+        // Thiết kế này tôn trọng API yêu cầu của người dùng, nếu không có dữ liệu ta hiện tin nhắn.
+        if (!products.length) {
+            container.innerHTML = `<p style="color:#777; padding:10px;">Bạn cần mua thêm hoặc đánh giá sản phẩm để hệ thống gợi ý món đồ phù hợp!</p>`;
+            return;
         }
 
-        renderGuestRecommendations(products);
+        // Tái sử dụng product-card-v2 style như layout chính
+        container.innerHTML = products.map(p => {
+            let imgUrl = `https://placehold.co/300x200/EFEFEF/AAAAAA&text=${encodeURIComponent(p.name || 'SP')}`;
+            if (p.imageUrl) {
+                if (p.imageUrl.startsWith('http://') || p.imageUrl.startsWith('https://')) {
+                    imgUrl = p.imageUrl.replace('http://localhost:8081', PRODUCT_IMAGE_BASE_URL);
+                } else if (p.imageUrl.startsWith('/')) {
+                    imgUrl = `${PRODUCT_IMAGE_BASE_URL}${p.imageUrl}`;
+                } else {
+                    let base = PRODUCT_IMAGE_BASE_URL.endsWith('/') ? PRODUCT_IMAGE_BASE_URL.slice(0, -1) : PRODUCT_IMAGE_BASE_URL;
+                    imgUrl = `${base}/product-images/${p.imageUrl}`;
+                }
+            }
+            return `
+            <div class="product-card-v2" onclick="window.location.href='product-detail.html?id=${p.id}'" style="cursor:pointer;">
+                <div class="img-wrap">
+                    <img src="${imgUrl}" onerror="this.onerror=null;this.src='https://placehold.co/300x200/EFEFEF/AAAAAA&text=Ảnh lỗi';">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">${p.name}</h3>
+                    <div class="card-price">${(parseFloat(p.price)||0).toLocaleString('vi-VN')} đ</div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-add btn-add-to-cart" data-product-id="${p.id}" onclick="event.stopPropagation(); addToCartAPI(${p.id})">
+                        <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>`;
+        }).join("");
     } catch (err) {
         console.error("❌ Lỗi loadHomeRecommendations:", err);
         container.innerHTML = `<p class="error-message">Không thể tải danh sách gợi ý.</p>`;
@@ -1538,13 +1606,17 @@ function attachSellerProductEvents(productId) {
             const endpoint = isCurrentlyActive
                 ? `/products/${productId}/deactivate`
                 : `/products/${productId}/activate`;
+                
+            const storeId = localStorage.getItem("userStoreId");
 
             const res = await callApi(
                 PRODUCT_API_BASE_URL,
                 endpoint,
                 "PATCH",
                 null,
-                true
+                true,
+                false,
+                { "X-Store-Id": storeId }
             );
 
             if (res.ok) {
@@ -1561,12 +1633,16 @@ function attachSellerProductEvents(productId) {
         btn.addEventListener("click", async () => {
             if (!confirm("Bạn có chắc chắn muốn XÓA sản phẩm này không?")) return;
 
+            const storeId = localStorage.getItem("userStoreId");
+
             const res = await callApi(
                 PRODUCT_API_BASE_URL,
                 `/products/${productId}`,
                 "DELETE",
                 null,
-                true
+                true,
+                false,
+                { "X-Store-Id": storeId }
             );
 
             if (res.ok) {
@@ -2709,6 +2785,9 @@ async function loadMyOrders() {
     }
 
     let html = "";
+
+    // Sắp xếp đơn hàng mới nhất lên đầu bằng orderDate
+    orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
     orders.forEach(order => {
         const id        = order.id;
@@ -4466,22 +4545,61 @@ async function loadMyRatings() {
         return;
     }
 
+    const prodDetails = {};
+    const prodPromises = list.map(r => {
+        if (!prodDetails[r.productId]) {
+            prodDetails[r.productId] = { name: "Sản phẩm #" + r.productId, img: "images/default-avatar.png" };
+            return callApi(PRODUCT_API_BASE_URL, `/products/${r.productId}`, "GET", null, false)
+                .then(pRes => {
+                    if (pRes.ok && pRes.data) {
+                        const product = pRes.data.result || pRes.data;
+                        prodDetails[r.productId] = {
+                            name: product.name || "Sản phẩm #" + r.productId,
+                            img: product.imageUrl || "images/default-avatar.png"
+                        };
+                    }
+                }).catch(e => console.error("Err fetch product", e));
+        }
+        return Promise.resolve();
+    });
+
+    await Promise.all(prodPromises);
+
     let html = "";
     list.forEach(r => {
+        const prod = prodDetails[r.productId];
+        let pName = prod.name;
+        let pImg = prod.img;
+
+        if (pImg && pImg.startsWith("/api")) {
+           pImg = PRODUCT_IMAGE_BASE_URL.replace("/images", "") + pImg; 
+        } else if (pImg && !pImg.startsWith("http")) {
+            pImg = `${PRODUCT_IMAGE_BASE_URL}/${pImg}`;
+        }
+
         const stars = "★".repeat(r.ratingValue) + "☆".repeat(5 - r.ratingValue);
 
         html += `
-            <div class="rating-item">
-                <strong>Sản phẩm ID: ${r.productId}</strong>
-                <div class="rating-stars">${stars}</div>
+            <div class="rating-item" style="display:flex; gap:16px; align-items:flex-start; border-bottom:1px solid #eee; padding-bottom:16px; margin-bottom:16px;">
+                <img src="${pImg}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;" onerror="this.src='images/default-avatar.png'">
+                <div style="flex:1;">
+                    <strong style="display:block; margin-bottom: 6px; font-size: 1.05em; color: #333;">${pName}</strong>
+                    <div class="rating-stars" style="margin-bottom: 6px;">${stars}</div>
                 <p>${r.comment}</p>
                 <small style="color:#777">${new Date(r.createdAt).toLocaleString()}</small>
-                <br>
-                <button class="delete-btn" 
-                        data-product-id="${r.productId}" 
-                        data-rating-id="${r.id}">
-                    Xóa đánh giá
-                </button>
+                <div style="margin-top: 8px;">
+                    <button class="edit-btn" 
+                            data-product-id="${r.productId}" 
+                            data-rating-value="${r.ratingValue}"
+                            data-rating-comment="${(r.comment || '').replace(/"/g, '&quot;')}">
+                        Sửa đánh giá
+                    </button>
+                    <button class="delete-btn" 
+                            data-product-id="${r.productId}" 
+                            data-rating-id="${r.id}">
+                        Xóa đánh giá
+                    </button>
+                </div>
             </div>
         `;
     });
@@ -4491,6 +4609,24 @@ async function loadMyRatings() {
     // GẮN SỰ KIỆN XÓA
     document.querySelectorAll(".delete-btn").forEach(btn => {
         btn.addEventListener("click", handleDeleteRating);
+    });
+
+    // GẮN SỰ KIỆN SỬA
+    document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const btnEl = e.target.closest(".edit-btn");
+            const prodId = btnEl.dataset.productId;
+            reviewingProductId = prodId; // Global variable
+            
+            document.getElementById("review-stars").value = btnEl.dataset.ratingValue;
+            document.getElementById("review-comment").value = btnEl.dataset.ratingComment;
+            
+            // LƯU LUÔN VÀO MODAL GÓC ĐỂ FIX BUG CHẮC CHẮN 100%
+            const modal = document.getElementById("review-modal");
+            modal.dataset.productId = prodId;
+            modal.dataset.isEdit = "true";
+            modal.style.display = "flex";
+        });
     });
 }
 function initProductRatingUI(productId) {
@@ -5279,10 +5415,21 @@ async function submitReview() {
         return;
     }
 
-    if (!reviewingProductId) {
+    // CHECK BOTH GLOBAL VAR AND MODAL DATASET
+    const modal = document.getElementById("review-modal");
+    let actualProductId = reviewingProductId;
+    if (!actualProductId && modal && modal.dataset.productId) {
+        actualProductId = modal.dataset.productId;
+    }
+
+    if (!actualProductId || actualProductId === "undefined" || actualProductId === "null") {
         alert("Không xác định được sản phẩm để đánh giá.");
         return;
     }
+
+    // Đảm bảo không bấm nhiều lần
+    const btnSubmit = document.getElementById("btn-submit-review");
+    if(btnSubmit) btnSubmit.disabled = true;
 
     const body = {
         // map đúng với backend mà bạn test bằng Postman
@@ -5290,15 +5437,17 @@ async function submitReview() {
         comment: comment
     };
 
-    console.log("Sending review body:", body, "productId:", reviewingProductId);
+    console.log("Sending review body:", body, "productId:", actualProductId);
 
     const res = await callApi(
         PRODUCT_API_BASE_URL,
-        `/products/${reviewingProductId}/ratings`,
+        `/products/${actualProductId}/ratings`,
         "POST",
         body,
         true   // cần token
     );
+
+    if(btnSubmit) btnSubmit.disabled = false;
 
     if (res.ok) {
         alert("Đánh giá thành công!");

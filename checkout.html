@@ -1,51 +1,59 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh Toán</title> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh Toán – HyperBuy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 
-    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header>
-        <nav id="main-navbar">
-            <div class="container nav-container">
-                <a href="index.html" class="nav-brand">HyperBuy</a>
-                <ul id="main-nav" class="nav-links">
-                    <li><a href="index.html" id="nav-home" class="nav-link">Trang Chủ</a></li>
-                    <li><a href="products.html" id="nav-products" class="nav-link">Sản Phẩm</a></li>
-                    <li id="nav-profile" style="display: none;"><a href="profile.html" class="nav-link">Hồ Sơ</a></li>
-                    <li id="nav-my-orders" style="display: none;"><a href="my-orders.html" class="nav-link">Đơn Hàng</a></li>
-                     <a href="admin.html" id="nav-admin-dashboard" style="display:none;">Trang Quản Trị</a>
-                    <li id="nav-cart-link-li"><a href="cart.html" id="nav-cart-link" class="nav-link">Giỏ Hàng<span class="cart-item-count-nav" style="display: none;"></span></a></li>
-                    <li><a href="minigame.html" class="nav-link">MiniGame</a></li>
-                    <li class="nav-item nav-notification-container" id="nav-notification-bell" style="display: none; position: relative;">
-                        <a href="#" id="notification-bell-link" class="nav-link nav-link-bell" title="Thông báo">
-                            <i class="fas fa-bell"></i>
-                            <span id="notification-count" class="notification-badge" style="display: none;"></span>
-                        </a>
-                        <div class="dropdown-menu-notif notification-list-dropdown" id="notification-dropdown">
-                            <div class="notification-dropdown-header">Thông báo</div>
-                            <ul id="notification-list-items" class="notification-list">
-                                <li><a class="dropdown-item-notif" href="#">Không có thông báo nào.</a></li>
-                            </ul>
-                            <div class="notification-dropdown-footer">
-                                <a href="notifications.html" class="view-all-notifications">Xem tất cả thông báo</a>
-                            </div>
-                        </div>
-                    </li>
 
-                    <li id="nav-login"><a href="login.html" class="nav-link">Đăng Nhập</a></li>
-                    <li id="nav-register"><a href="register.html" class="nav-link">Đăng Ký</a></li>
-                    <li id="nav-logout" style="display: none;"><a href="#" class="nav-link">Đăng Xuất</a></li>
-                </ul>
+<header class="main-header">
+  <nav id="main-navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul id="main-nav" class="nav-links">
+        <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
+        <li><a href="products.html" id="nav-products" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+        <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Hồ Sơ</a></li>
+        <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
+        <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i class="fas fa-cogs"></i> Quản Trị</a></li>
+        <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
+        <li id="nav-cart-link-li">
+          <a href="cart.html" id="nav-cart-link" class="nav-link">
+            <i class="fas fa-shopping-cart"></i> Giỏ Hàng
+            <span class="cart-item-count-nav" style="display:none;"></span>
+          </a>
+        </li>
+        <li id="nav-notification-bell" style="display:none; position:relative;">
+          <a href="#" id="notification-bell-link" class="nav-link nav-link-bell">
+            <i class="fas fa-bell"></i>
+            <span id="notification-count" class="notification-badge" style="display:none;"></span>
+          </a>
+          <div id="notification-dropdown" class="notification-list-dropdown">
+            <div class="notification-dropdown-header">Thông báo</div>
+            <ul id="notification-list-items" class="notification-list">
+              <li><a class="dropdown-item-notif" href="#">Không có thông báo nào.</a></li>
+            </ul>
+            <div class="notification-dropdown-footer">
+              <a href="notifications.html" class="view-all-notifications">Xem tất cả</a>
             </div>
-    </header>
+          </div>
+        </li>
+        <li id="nav-login"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
+        <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a></li>
+        <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
 <main class="container">
   <section id="checkout-section" class="checkout-page">
     <h1 class="checkout-title">Thông Tin Đặt Hàng</h1>
@@ -223,5 +231,11 @@
         </div>
     </footer>
     <script src="js/main.js"></script>
+    <script>
+      document.getElementById('nav-toggle').addEventListener('click', () => {
+        document.getElementById('main-nav').classList.toggle('open');
+      });
+    </script>
+
 </body>
 </html>

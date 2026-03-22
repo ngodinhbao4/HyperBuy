@@ -36,11 +36,16 @@ if (
     // === TẢI DỮ LIỆU BAN ĐẦU ===
     console.log("Admin Dashboard: Bắt đầu tải dữ liệu...");
     await loadSellerRequests();
-    await loadAllUsers(); // Đã thêm dòng này từ code cũ của bạn, giữ lại
+    await loadAllUsers();
     await loadBannedUsers();
     await loadAdminCategories();
-    await loadAdminOrders();
+    await loadAdminVouchers();
+    await loadAdminRoles();
     console.log("Admin Dashboard: Tải dữ liệu hoàn tất.");
+
+    // Update stat cards
+    updateStatCards();
+
 
     // === LOGIC ĐIỀU HƯỚNG CON CHO ADMIN ===
     const adminSections = document.querySelectorAll('.admin-section');
@@ -91,6 +96,18 @@ if (
     document.getElementById('adminSendNotificationForm')?.addEventListener('submit', handleAdminSendNotificationSubmit);
     document.getElementById('createVoucherForm')?.addEventListener('submit', handleCreateVoucher);
     document.getElementById('issueVoucherForm')?.addEventListener('submit', handleIssueVoucher);
+    document.getElementById('btn-reload-vouchers')?.addEventListener('click', () => loadAdminVouchers());
+    document.getElementById('btn-create-role')?.addEventListener('click', handleCreateRole);
+    document.getElementById('btn-reload-roles')?.addEventListener('click', () => loadAdminRoles());
+    document.getElementById('roles-table')?.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.btn-delete-role');
+        if (btn) {
+            const roleName = btn.dataset.role;
+            if (roleName && confirm(`Bạn có chắc muốn XÓA role "${roleName}" không?`)) {
+                await handleDeleteRole(roleName);
+            }
+        }
+    });
     
     const currentYearEl = document.getElementById('current-year');
     if (currentYearEl) currentYearEl.textContent = new Date().getFullYear();
@@ -101,6 +118,33 @@ function displayTableMessage(tableId, message, colspan = 5, isError = false) {
     const tableBody = document.getElementById(tableId)?.querySelector('tbody');
     if (tableBody) {
         tableBody.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: ${isError ? 'red' : 'inherit'};">${message}</td></tr>`;
+    }
+}
+// === CẬP NHẬT STAT CARDS ===
+function updateStatCards() {
+    const allUserCount = document.getElementById('all-user-count')?.textContent;
+    const bannedCount = document.getElementById('banned-user-count')?.textContent;
+    const catCount = document.querySelectorAll('#categories-table tbody tr')?.length;
+
+    if (document.getElementById('stat-total-users') && allUserCount)
+        document.getElementById('stat-total-users').textContent = allUserCount || '0';
+
+    if (document.getElementById('stat-total-banned') && bannedCount)
+        document.getElementById('stat-total-banned').textContent = bannedCount || '0';
+
+    // Count sellers from user table
+    const allRows = document.querySelectorAll('#all-users-table tbody tr');
+    let sellerCount = 0;
+    allRows.forEach(row => {
+        if (row.textContent.includes('SELLER')) sellerCount++;
+    });
+    const statSellers = document.getElementById('stat-total-sellers');
+    if (statSellers) statSellers.textContent = sellerCount;
+
+    const statCat = document.getElementById('stat-total-categories');
+    if (statCat) {
+        const rows = document.querySelectorAll('#categories-table tbody tr');
+        statCat.textContent = rows.length > 0 && rows[0].children.length > 1 ? rows.length : '0';
     }
 }
 
@@ -166,19 +210,24 @@ async function loadAllUsers() {
         tableBody.innerHTML = '';
         users.forEach(user => {
             const isAdmin = user.role?.some(r => r.name === 'ADMIN');
-            const roles = user.role?.map(r => r.name).join(', ') || 'N/A';
+            const isSeller = user.role?.some(r => r.name === 'SELLER');
+            const roleNames = user.role?.map(r => r.name) || [];
+            const roleBadges = roleNames.map(r =>
+                `<span class="role-badge ${r}">${r}</span>`
+            ).join(' ') || '<span class="role-badge USER">USER</span>';
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${user.id || 'N/A'}</td>
-                <td>${user.username || user.name || 'N/A'}</td>
+                <td style="font-family:monospace;font-size:0.78rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;">${user.id || 'N/A'}</td>
+                <td><strong>${user.username || user.name || 'N/A'}</strong></td>
                 <td>${user.email || 'N/A'}</td>
-                <td>${roles}</td>
+                <td>${roleBadges}</td>
                 <td class="action-buttons">
-                   ${!isAdmin ? `<button class="btn btn-danger btn-sm ban-user" data-id="${user.id}">Cấm</button>` : 'Quản trị viên'}
+                   ${!isAdmin ? `<button class="btn btn-danger btn-sm ban-user" data-id="${user.id}"><i class="fas fa-ban"></i> Cấm</button>` : '<span style="color:var(--admin-text-muted)">Quản trị viên</span>'}
                 </td>
             `;
             tableBody.appendChild(tr);
         });
+
     } else {
         displayTableMessage('all-users-table', `Lỗi tải danh sách người dùng: ${result.error || result.data?.message || 'Failed to fetch'}`, 5, true);
     }
@@ -341,12 +390,12 @@ async function loadAdminOrders() {
                 ? new Date(order.createdAt).toLocaleString('vi-VN')
                 : '';
 
-            let statusBadge = order.status || '';
             const statusClass =
-                order.status === 'DELIVERED' ? 'badge bg-success' :
-                order.status === 'CONFIRMED' ? 'badge bg-primary' :
-                order.status === 'CANCELLED' ? 'badge bg-danger' :
-                'badge bg-secondary';
+                order.status === 'DELIVERED' ? 'role-badge SELLER' :
+                order.status === 'CONFIRMED' ? 'role-badge ADMIN' :
+                order.status === 'CANCELLED' ? 'role-badge BANNED' :
+                'role-badge USER';
+
 
             tr.innerHTML = `
     <td>${order.id ?? ''}</td>
@@ -522,3 +571,207 @@ async function handleAdminSendNotificationSubmit(event) {
         if (errorMsgEl) { errorMsgEl.textContent = `Lỗi gửi thông báo: ${result.data?.message || result.error}`; errorMsgEl.style.display = 'block'; }
     }
 }
+
+// ===== QUẢN LÝ VOUCHER =====
+async function loadAdminVouchers() {
+    const tbody = document.getElementById('admin-vouchers-table')?.querySelector('tbody');
+    const countEl = document.getElementById('admin-voucher-count');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--admin-text-muted);">Đang tải...</td></tr>`;
+
+    const result = await callApi(VOUCHER_API_BASE_URL, '/vouchers', 'GET', null, true);
+    const vouchers = Array.isArray(result.data) ? result.data
+        : Array.isArray(result.data?.result) ? result.data.result
+        : Array.isArray(result.data?.content) ? result.data.content : [];
+
+    if (!result.ok && !vouchers.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:red;">Lỗi tải voucher: ${result.data?.message || result.error || 'Không kết nối được'}</td></tr>`;
+        return;
+    }
+    if (countEl) countEl.textContent = vouchers.length;
+    // Update stat card
+    const statVoucher = document.getElementById('stat-total-vouchers');
+    if (statVoucher) statVoucher.textContent = vouchers.length;
+
+    if (!vouchers.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--admin-text-muted);">Chưa có voucher nào.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = '';
+    vouchers.forEach(v => {
+        const discount = v.discountType === 'PERCENT'
+            ? `${v.discountValue}%`
+            : `${(v.discountValue || 0).toLocaleString('vi-VN')}₫`;
+        const endDate = v.endDate ? new Date(v.endDate).toLocaleDateString('vi-VN') : '—';
+        const statusClass = v.status === 'ACTIVE' ? 'role-badge SELLER' : 'role-badge BANNED';
+        const statusLabel = v.status === 'ACTIVE' ? 'ACTIVE' : (v.status || 'INACTIVE');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${v.code || '—'}</strong></td>
+            <td>${v.discountType === 'PERCENT' ? 'Phần trăm' : 'Tiền mặt'}</td>
+            <td>${discount}</td>
+            <td>${v.pointCost ?? 0}</td>
+            <td>${v.quantity ?? '—'}</td>
+            <td>${endDate}</td>
+            <td><span class="${statusClass}">${statusLabel}</span></td>
+            <td class="action-buttons">
+                <button class="btn btn-danger btn-sm delete-voucher" data-code="${v.code}"><i class="fas fa-trash"></i> Xóa</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // Bind delete
+    tbody.querySelectorAll('.delete-voucher').forEach(btn => {
+        btn.addEventListener('click', () => handleDeleteVoucher(btn.dataset.code));
+    });
+}
+
+async function handleDeleteVoucher(code) {
+    if (!code || !confirm(`Xóa voucher "${code}"?`)) return;
+    const result = await callApi(VOUCHER_API_BASE_URL, `/vouchers/${encodeURIComponent(code)}`, 'DELETE', null, true);
+    if (result.ok) {
+        showMessage('voucher-list-message', `Đã xóa voucher ${code}!`, true);
+        await loadAdminVouchers();
+    } else {
+        showMessage('voucher-list-message', `Lỗi xóa voucher: ${result.data?.message || result.error}`, false);
+    }
+}
+
+async function handleCreateVoucher(event) {
+    event.preventDefault();
+    const form = event.target;
+    const data = {
+        code:          form.code.value.trim(),
+        discountValue: parseFloat(form.discountValue.value),
+        discountType:  form.discountType.value,
+        quantity:      parseInt(form.quantity.value, 10) || 1,
+        startDate:     form.startDate.value ? form.startDate.value.replace('T', ' ') + ':00' : null,
+        endDate:       form.endDate.value   ? form.endDate.value.replace('T', ' ')   + ':00' : null,
+        pointCost:     parseInt(form.pointCost.value, 10) || 0,
+        status:        form.status.value,
+    };
+    if (!data.code) { showMessage('voucher-error-message', 'Mã voucher không được để trống.', false); return; }
+    showMessage('voucher-error-message', '', false);
+
+    const result = await callApi(VOUCHER_API_BASE_URL, '/vouchers', 'POST', data, true);
+    if (result.ok) {
+        showMessage('voucher-success-message', `Tạo voucher ${data.code} thành công!`, true);
+        form.reset();
+        await loadAdminVouchers();
+    } else {
+        showMessage('voucher-error-message', `Lỗi: ${result.data?.message || result.error || 'Tạo voucher thất bại.'}`, false);
+    }
+}
+
+async function handleIssueVoucher(event) {
+    event.preventDefault();
+    const form = event.target;
+    const userId = form.userId.value.trim();
+    const voucherCode = form.voucherCode.value.trim();
+    if (!userId || !voucherCode) {
+        showMessage('issue-error-message', 'Vui lòng nhập đầy đủ User ID và Mã Voucher.', false);
+        return;
+    }
+    const result = await callApi(VOUCHER_API_BASE_URL, `/vouchers/issue/${encodeURIComponent(userId)}?code=${encodeURIComponent(voucherCode)}`, 'POST', null, true);
+    if (result.ok) {
+        showMessage('issue-success-message', `Đã gửi voucher ${voucherCode} cho user ${userId}!`, true);
+        form.reset();
+    } else {
+        showMessage('issue-error-message', `Lỗi: ${result.data?.message || result.error || 'Phát voucher thất bại.'}`, false);
+    }
+}
+
+// ===== QUẢN LÝ ROLE =====
+
+async function loadAdminRoles() {
+    const tbody = document.getElementById('roles-table')?.querySelector('tbody');
+    const countEl = document.getElementById('role-count');
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--admin-text-muted);">Đang tải...</td></tr>`;
+
+    const result = await callApi(USER_API_BASE_URL, '/roles', 'GET', null, true);
+
+    // Backend trả về { code, message, result: [...] }
+    const roles = Array.isArray(result.data?.result) ? result.data.result
+        : Array.isArray(result.data) ? result.data : [];
+
+    if (!result.ok && !roles.length) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:red;">Lỗi tải danh sách role: ${result.data?.message || result.error || 'Không kết nối được'}</td></tr>`;
+        return;
+    }
+
+    if (countEl) countEl.textContent = roles.length;
+
+    if (!roles.length) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--admin-text-muted);">Chưa có role nào.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = '';
+    const protectedRoles = ['ADMIN', 'USER', 'SELLER'];
+
+    roles.forEach(role => {
+        const permissionNames = role.permissions?.map(p => p.name || p).join(', ') || '—';
+        const isProtected = protectedRoles.includes(role.name?.toUpperCase());
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong><span class="role-badge ${role.name?.toUpperCase()}">${role.name || '—'}</span></strong></td>
+            <td>${role.description || '—'}</td>
+            <td style="font-size:0.8rem;color:var(--admin-text-muted);">${permissionNames}</td>
+            <td class="action-buttons">
+                ${isProtected
+                    ? `<span style="color:var(--admin-text-muted);font-size:0.82rem;"><i class="fas fa-lock"></i> Hệ thống</span>`
+                    : `<button class="btn btn-danger btn-sm btn-delete-role" data-role="${role.name}"><i class="fas fa-trash"></i> Xóa</button>`
+                }
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function handleCreateRole() {
+    const nameInput = document.getElementById('role-name');
+    const descInput = document.getElementById('role-description');
+    const msgEl = document.getElementById('role-msg');
+
+    const name = nameInput?.value.trim().toUpperCase();
+    const description = descInput?.value.trim();
+
+    if (!name) {
+        if (msgEl) { msgEl.textContent = 'Vui lòng nhập tên role.'; msgEl.style.color = 'red'; }
+        return;
+    }
+
+    if (msgEl) { msgEl.textContent = 'Đang tạo...'; msgEl.style.color = 'var(--admin-text-muted)'; }
+
+    const result = await callApi(USER_API_BASE_URL, '/roles', 'POST', {
+        name,
+        description,
+        permission: []
+    }, true);
+
+    if (result.ok) {
+        if (msgEl) { msgEl.textContent = `✅ Tạo role "${name}" thành công!`; msgEl.style.color = 'green'; }
+        if (nameInput) nameInput.value = '';
+        if (descInput) descInput.value = '';
+        await loadAdminRoles();
+        setTimeout(() => { if (msgEl) msgEl.textContent = ''; }, 4000);
+    } else {
+        const err = result.data?.message || result.error || 'Tạo role thất bại.';
+        if (msgEl) { msgEl.textContent = `❌ Lỗi: ${err}`; msgEl.style.color = 'red'; }
+    }
+}
+
+async function handleDeleteRole(roleName) {
+    const result = await callApi(USER_API_BASE_URL, `/roles/${encodeURIComponent(roleName)}`, 'DELETE', null, true);
+    if (result.ok || result.status === 204) {
+        alert(`Đã xóa role "${roleName}" thành công!`);
+        await loadAdminRoles();
+    } else {
+        alert(`Lỗi xóa role: ${result.data?.message || result.error || 'Xóa thất bại.'}`);
+    }
+}

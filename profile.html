@@ -150,75 +150,61 @@
         min-width: 180px;
         text-align: center;
       }
-          .profile-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .logout-icon-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 24px;
-      color: #ef4444;
-    }
-    .logout-icon-btn:hover {
-      color: #dc2626;
-      transform: scale(1.1);
-      transition: 0.15s;
-    }
+      
   </style>
 </head>
 
 <body>
-  <header>
-    <nav id="main-navbar">
-      <div class="container nav-container">
-        <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
-        <ul id="main-nav" class="nav-links">
-          <li><a href="index.html" id="nav-home" class="nav-link">Trang Chủ</a></li>
-          <li><a href="products.html" id="nav-products" class="nav-link">Sản Phẩm</a></li>
-          <li id="nav-profile"><a href="profile.html" class="nav-link active">Hồ Sơ</a></li>
-          <li id="nav-my-orders"><a href="my-orders.html" class="nav-link">Đơn Hàng</a></li>
-          <li><a href="minigame.html" class="nav-link">MiniGame</a></li>
-          <li id="nav-cart-link-li"><a href="cart.html" class="nav-link">Giỏ Hàng</a></li>
-                          <!-- 🔔 THÔNG BÁO -->
-                <li id="nav-notification-bell" style="display:none; position:relative;">
-    <a href="#" id="notification-bell-link" class="nav-link nav-link-bell" title="Thông báo">
-        <i class="fas fa-bell"></i>
-        <span id="notification-count" class="notification-badge" style="display:none;"></span>
-    </a>
-
-    <div id="notification-dropdown" class="notification-list-dropdown">
-        <div class="notification-dropdown-header">Thông báo</div>
-        <ul id="notification-list-items" class="notification-list">
-            <li><a class="dropdown-item-notif">Không có thông báo nào.</a></li>
-        </ul>
-        <div class="notification-dropdown-footer">
-            <a href="notifications.html" class="view-all-notifications">Xem tất cả thông báo</a>
-        </div>
+<header class="main-header">
+  <nav id="main-navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">⚡ HyperBuy</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul id="main-nav" class="nav-links">
+        <li><a href="index.html" id="nav-home" class="nav-link"><i class="fas fa-home"></i> Trang Chủ</a></li>
+        <li><a href="products.html" id="nav-products" class="nav-link"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+        <li id="nav-profile" style="display:none;"><a href="profile.html" class="nav-link active"><i class="fas fa-user"></i> Hồ Sơ</a></li>
+        <li id="nav-my-orders" style="display:none;"><a href="my-orders.html" class="nav-link"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
+        <li id="nav-admin-dashboard-li" style="display:none;"><a href="admin.html" class="nav-link"><i class="fas fa-cogs"></i> Quản Trị</a></li>
+        <li><a href="minigame.html" class="nav-link"><i class="fas fa-gamepad"></i> MiniGame</a></li>
+        <li id="nav-cart-link-li">
+          <a href="cart.html" class="nav-link">
+            <i class="fas fa-shopping-cart"></i> Giỏ Hàng
+            <span class="cart-item-count-nav" style="display:none;"></span>
+          </a>
+        </li>
+        <li id="nav-notification-bell" style="display:none; position:relative;">
+          <a href="#" id="notification-bell-link" class="nav-link nav-link-bell" title="Thông báo">
+            <i class="fas fa-bell"></i>
+            <span id="notification-count" class="notification-badge" style="display:none;"></span>
+          </a>
+          <div id="notification-dropdown" class="notification-list-dropdown">
+            <div class="notification-dropdown-header">Thông báo</div>
+            <ul id="notification-list-items" class="notification-list">
+              <li><a class="dropdown-item-notif">Không có thông báo nào.</a></li>
+            </ul>
+            <div class="notification-dropdown-footer">
+              <a href="notifications.html" class="view-all-notifications">Xem tất cả thông báo</a>
+            </div>
+          </div>
+        </li>
+        <li id="nav-login"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a></li>
+        <li id="nav-register"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Đăng Ký</a></li>
+        <li id="nav-logout" style="display:none;"><a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a></li>
+      </ul>
     </div>
-</li>
-        </ul>
-      </div>
-    </nav>
-  </header>
+  </nav>
+</header>
+
 <main class="container">
   <section id="user-profile">
 
-    <div id="profile-header" class="profile-header">
+    <div id="profile-header" style="margin-bottom:20px;">
       <h2>
         <i class="fas fa-user-circle"></i> Thông tin cá nhân
       </h2>
-
-      <!-- 🔴 ICON ĐĂNG XUẤT -->
-      <button id="btn-logout-profile"
-              type="button"
-              class="logout-icon-btn"
-              title="Đăng xuất">
-        <i class="fas fa-sign-out-alt"></i>
-      </button>
     </div>
 
 
@@ -238,66 +224,61 @@
 
     <div id="profile-actions" style="margin-top: 25px;">
 
-      <!-- Hàng nút chung cho mọi user -->
-      <div id="profile-actions-buttons">
+      <!-- Bố trí lại các nút chung -->
+      <div id="profile-actions-buttons" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
         <button id="openSellerRequestModalBtn"
                 class="btn btn-primary"
-                style="display:none;">
-          Đăng ký Bán hàng
+                style="display:none; padding: 12px 20px; border-radius: 8px;">
+          <i class="fas fa-store-slash"></i> Đăng ký Bán hàng
         </button>
 
         <a href="my-ratings.html"
           id="btn-view-my-ratings"
           class="btn btn-secondary"
-          style="background:#f97316; color:#fff;">
-          ⭐ Xem đánh giá của tôi
+          style="background:#f97316; color:#fff; padding: 12px 20px; border-radius: 8px;">
+          <i class="fas fa-star"></i> Xem đánh giá của tôi
         </a>
-      </div>
+
         <a href="my-voucher.html"
           id="btn-my-vouchers"
           class="btn btn-secondary"
-          style="background:#22c55e; color:#fff;">
-          🎁 Voucher của tôi
+          style="background:#22c55e; color:#fff; padding: 12px 20px; border-radius: 8px;">
+          <i class="fas fa-gift"></i> Voucher của tôi
         </a>
+      </div>
 
       <!-- Status đăng ký seller (nếu có) -->
       <p id="seller-status-message"
-        style="margin-top: 10px; font-weight: 500;"></p>
-    </div>
+        style="margin-bottom: 20px; font-weight: 500; padding: 12px; border-radius: 8px; text-align: center; display: none;"></p>
 
-    <!-- KHU VỰC ACTION CỬA HÀNG CHO SELLER -->
-    <div id="profile-store-actions">
-      <button id="btn-view-my-store" class="btn btn-info">
-        Xem Cửa hàng Của Tôi
-      </button>
+      <!-- KHU VỰC ACTION CỬA HÀNG CHO SELLER -->
+      <div id="profile-store-actions" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <h3 style="margin-bottom: 15px; font-size: 1.2rem; color: #1e293b;"><i class="fas fa-store"></i> Quản lý Cửa hàng</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a href="my-store.html" id="btn-view-my-store" class="btn btn-info" style="padding: 12px 20px; border-radius: 8px;">
+            <i class="fas fa-info-circle"></i> Xem Cửa hàng Của Tôi
+          </a>
 
-      <button id="btn-add-product-my-store" class="btn btn-primary">
-        Thêm sản phẩm mới
-      </button>
+          <button id="btn-add-product-my-store" class="btn btn-primary" style="background:#8b5cf6; padding: 12px 20px; border-radius: 8px;">
+            <i class="fas fa-plus-circle"></i> Thêm sản phẩm mới
+          </button>
 
-      <a href="seller-orders.html"
-        id="btn-seller-manage-orders"
-        class="btn btn-primary"
-        style="background:#10b981;">
-        <i class="fas fa-box"></i> Quản lý đơn hàng cửa hàng
-      </a>
+          <a href="seller-orders.html"
+            id="btn-seller-manage-orders"
+            class="btn btn-primary"
+            style="background:#10b981; padding: 12px 20px; border-radius: 8px;">
+            <i class="fas fa-box"></i> Quản lý đơn hàng
+          </a>
 
-      <a href="seller-revenue.html"
-        id="btn-seller-revenue"
-        class="btn btn-primary"
-        style="background:#3b82f6;">
-        <i class="fas fa-chart-line"></i> Xem Doanh Thu
-      </a>
-
-      <div id="my-store-info-container"
-          style="margin-top: 15px; display:none; background-color: #f9fafb; padding:15px; border-radius: 10px;">
-        <h4>Thông tin Cửa hàng</h4>
-        <p><strong>Tên cửa hàng:</strong> <span id="my-store-name">N/A</span></p>
-        <p><strong>ID cửa hàng:</strong> <span id="my-store-id">N/A</span></p>
-        <p><strong>Giấy phép KD:</strong> <span id="my-store-license">N/A</span></p>
-        <div id="my-store-products-profile" class="modal-products-grid" style="margin-top:10px;"></div>
+          <a href="seller-revenue.html"
+            id="btn-seller-revenue"
+            class="btn btn-primary"
+            style="background:#3b82f6; padding: 12px 20px; border-radius: 8px;">
+            <i class="fas fa-chart-line"></i> Xem Doanh Thu
+          </a>
+        </div>
       </div>
-    </div>
+
 
     </section>
   </main>
@@ -345,11 +326,18 @@
   </div>
 
   <footer>
-    <p>&copy; <span id="current-year"></span> HyperBuy. Mọi quyền được bảo lưu.</p>
+    <div class="container">
+      <p>&copy; <span id="current-year"></span> HyperBuy. Mọi quyền được bảo lưu.</p>
+    </div>
   </footer>
+
 
 <script src="js/main.js"></script>
 <script>
+  document.getElementById('nav-toggle').addEventListener('click', () => {
+    document.getElementById('main-nav').classList.toggle('open');
+  });
+
   document.addEventListener("DOMContentLoaded", () => {
     if (!isLoggedIn()) {
       alert("Bạn chưa đăng nhập!");
@@ -373,23 +361,5 @@
 
     document.getElementById("current-year").textContent =
       new Date().getFullYear();
-
-    // Nút Đăng xuất trên navbar
-    const navLogout = document.getElementById("nav-logout");
-    if (navLogout) {
-      navLogout.onclick = () => {
-        handleLogout();
-      };
-    }
-
-    // 🔴 Nút Đăng xuất trong profile (icon đỏ, sát phải)
-    const btnLogoutProfile = document.getElementById("btn-logout-profile");
-    if (btnLogoutProfile) {
-      btnLogoutProfile.addEventListener("click", (e) => {
-        e.preventDefault();
-        console.log("Logout from profile clicked");
-        handleLogout();
-      });
-    }
   });
 </script>
