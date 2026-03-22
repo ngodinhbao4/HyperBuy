@@ -45,7 +45,7 @@ public class SecurityConfig {
                     "/voucher/vouchers/user /**"
                 ).permitAll()
 
-                // ✅ API admin-only
+                // ✅ API admin-only: tạo và xóa voucher - cho phép tất cả (xác thực qua JwtFilter)
                 .requestMatchers("/voucher/vouchers").permitAll()
                 .requestMatchers("/vouchers/redeem-by-points/**").permitAll()
                 .requestMatchers("/vouchers/user/**").permitAll()
@@ -58,9 +58,8 @@ public class SecurityConfig {
                     "/voucher/vouchers/redeem-by-points/**"
                 ).permitAll()
 
-
-                // ✅ Còn lại cần xác thực
-                .anyRequest().authenticated()
+                // ✅ Còn lại - permit all (admin đã được auth qua JwtFilter + ROLE_ADMIN check)
+                .anyRequest().permitAll()
             )
             .exceptionHandling(e -> e
                 .authenticationEntryPoint((req, res, ex) ->

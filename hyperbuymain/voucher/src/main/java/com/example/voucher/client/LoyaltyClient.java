@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 )
 public interface LoyaltyClient {
 
-    @PostMapping("minigame/api/v1/loyalty/spend")
+    @PostMapping("/minigame/api/v1/loyalty/spend")
     LoyaltySpendPointsResponse spendPoints(@RequestBody LoyaltySpendPointsRequest request);
 }

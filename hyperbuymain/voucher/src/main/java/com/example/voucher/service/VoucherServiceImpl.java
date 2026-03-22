@@ -251,4 +251,9 @@ public class VoucherServiceImpl implements VoucherService {
         return userVoucher;
     }
 
+    @Override
+    public void deleteVoucher(String code) {
+        voucherRepository.findByCode(code).ifPresent(voucherRepository::delete);
+    }
+
 }

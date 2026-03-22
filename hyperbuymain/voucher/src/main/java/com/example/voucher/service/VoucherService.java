@@ -22,4 +22,6 @@ public interface VoucherService {
 
     UserVoucher redeemVoucherByPoints(String userId, String code);
 
+    void deleteVoucher(String code);
+
 }
